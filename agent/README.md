@@ -1,21 +1,53 @@
 # `agent/` — Agent B
 
-Pydantic models, learner, and fixture-driven tests. No browser in Wave 1.
+Pydantic models, Explorer / Verifier / Recovery (Pydantic AI), Playwright hands, tests.
 
-**You own this directory plus `fixtures/` and sample files in `adapters/`. Do not edit `web/`, `shared/`, or the root markdown plans.**
+**You own this directory plus `fixtures/` and sample files in `adapters/`.**
 
-Read first:
+## Real Store B transfer (R1)
 
-1. [../CONTRACT.md](../CONTRACT.md)
-2. [../ARCHITECTURE.md](../ARCHITECTURE.md) Typed models
-3. [../shared/examples/](../shared/examples/)
-4. [../PLAN.md](../PLAN.md) steps 3–4
+Cold start uses an **empty** adapter. The loop is:
 
-Inspiration (read-only — steal structure, not their runtime):
+```text
+Skill step → screenshot + visible elements → Explorer → act → Verifier
+  → match? save mapping : Recovery → retry
+```
 
-- `inspo/ShowUI-Aloha` — recorder → semantic trace
-- `inspo/UI-Mate` — demo is advice, not a script
-- `inspo/EvoSkill-GUI` — separate plan / recovery / failure knowledge
-- `inspo/pydantic-ai` — typed agent outputs
+Requires either a real API key or the CI mock:
 
-Full prompt: [../WAVE1.md](../WAVE1.md) § Agent B.
+```bash
+# Offline / CI mock (constrained heuristics, still picks from visible testids)
+SKILLSHIFT_MOCK_LLM=1 SKILLSHIFT_WEB_URL=http://localhost:3010 \
+  .venv/bin/python -m agent.run_transfer
+
+# Real multimodal grounding
+export GEMINI_API_KEY=...
+SKILLSHIFT_WEB_URL=http://localhost:3010 SKILLSHIFT_HEADED=1 \
+  SKILLSHIFT_DEMO_PAUSE=1.5 SKILLSHIFT_DEMO_HOLD=4 \
+  .venv/bin/python -m agent.run_transfer
+```
+
+Shipping is the hero adaptation: Go Live blocks until a shipping category is set; recovery discovers that prerequisite and persists it. Campaign / Modal are deferred (R2).
+
+`SKILLSHIFT_HEADED=1` for a visible browser. Headless skips pauses.
+
+## Pydantic Gateway (optional prize path)
+
+If `PYDANTIC_AI_GATEWAY_API_KEY` is set, Explorer/Verifier/Recovery use a `gateway/…` model so Logfire optimizations can change picks **without editing code**. See [docs/GATEWAY_PRIZE.md](../docs/GATEWAY_PRIZE.md).
+
+```bash
+.venv/bin/python -m agent.demo_gateway_before_after
+```
+
+## Modules
+
+| File | Role |
+| --- | --- |
+| `explorer.py` | Skill step → `CandidateAction` from visible elements |
+| `verifier.py` | Structured `Verification` (incl. `mismatch_type`) |
+| `recovery.py` | Next action after mismatch; adapter persist |
+| `transfer_loop.py` | Explore → Act → Verify → Recover → Persist |
+| `executor.py` | Playwright hands only |
+| `grounding.py` | Shared validation / screenshot parts |
+
+Read: [../ARCHITECTURE.md](../ARCHITECTURE.md), [../CONTRACT.md](../CONTRACT.md).

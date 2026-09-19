@@ -31,7 +31,7 @@ _API_KEY_MODELS: tuple[tuple[str, str], ...] = (
 INTENT_SHIPPING = "satisfy environment prerequisite: shipping category"
 
 # Control *kind* suffixes — not app-specific HOW HERE.
-FINISH_SUFFIXES = ("-go-live", "-launch-product", "-publish", "-save-row")
+FINISH_SUFFIXES = ("-go-live", "-launch-product", "-publish", "-save-row", "-release")
 NAME_SUFFIXES = ("-field-name", "-field-title")
 PRICE_SUFFIXES = ("-field-price", "-field-amount")
 IMAGE_SUFFIXES = ("-field-image", "-field-photo")
@@ -59,9 +59,20 @@ def is_finish_control(ref: str) -> bool:
 
 
 def configured_model() -> str | None:
+    """Resolve model for Explorer / Verifier / Recovery.
+
+    Priority:
+    1. SKILLSHIFT_MODEL (explicit override, may be gateway/…)
+    2. PYDANTIC_AI_GATEWAY_API_KEY → gateway/… (prize path; Logfire optimizations apply)
+    3. Direct provider keys (OpenAI / Anthropic / Gemini / Groq)
+    """
     override = os.environ.get("SKILLSHIFT_MODEL")
     if override:
         return override
+    from .gateway import gateway_enabled, gateway_model
+
+    if gateway_enabled():
+        return gateway_model()
     for env_name, model in _API_KEY_MODELS:
         if os.environ.get(env_name):
             return model
@@ -80,7 +91,8 @@ def require_decision_backend() -> str:
     if model:
         return model
     raise RuntimeError(
-        "Store B grounding requires an LLM API key (e.g. GEMINI_API_KEY) "
+        "Store B grounding requires PYDANTIC_AI_GATEWAY_API_KEY (prize path), "
+        "a direct LLM key (e.g. GEMINI_API_KEY), "
         "or SKILLSHIFT_MOCK_LLM=1 for offline/CI mocks. "
         "Hardcoded Store B decisions were removed."
     )
