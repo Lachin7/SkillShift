@@ -64,6 +64,18 @@ def hypotheses_from_observation(
                     }
                 ],
             }
+        if primary is None and ref.endswith("-field-category"):
+            primary = {
+                "id": "A",
+                "rationale": "select the visible category control then retry publish",
+                "actions": [
+                    {
+                        "target_testid": ref,
+                        "action": "select",
+                        "value": "General",
+                    }
+                ],
+            }
         if primary is None and "shipping" in lowered:
             primary = {
                 "id": "A",

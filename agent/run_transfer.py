@@ -185,7 +185,7 @@ def main() -> int:
             demo_hold()
 
             _log("Second run — cached adapter")
-            hands.goto("/store-b")
+            hands.goto(target.path)
             demo_pause()
             start_run(BLUE_SNEAKER.name)
             adapter2, card2 = run_store_b_transfer(

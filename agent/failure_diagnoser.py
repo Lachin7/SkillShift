@@ -138,6 +138,22 @@ def _diagnose_mock(
         and any(token in control.ref.lower() for token in ("go-live", "publish", "activate"))
         for control in observation.controls
     )
+    category_gate = any(
+        ref.endswith(("-field-category", "-category-blocker")) for ref in refs
+    )
+    if category_gate and (
+        publish_goal or verification_result.failure_class == "missing_prerequisite"
+    ):
+        return Diagnosis(
+            passed=False,
+            confidence=0.92,
+            expected_state=verification_result.expected_state,
+            observed_evidence=evidence or ["publish blocked; category message visible"],
+            failure_class="missing_prerequisite",
+            hypothesis="This environment requires a category before a listing can go Live.",
+            alternative="Satisfy the visible required control, then retry publish.",
+        )
+
     if (
         tax_blocker or ("tax" in blob and finish_disabled)
     ) and (

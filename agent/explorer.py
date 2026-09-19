@@ -218,6 +218,18 @@ def _explore_mock(
         return ExploreResult(candidates=[chosen], chosen=chosen)
 
     if "publicly available" in intent or "publish" in intent:
+        status_id = first_suffix(ids, ("-field-status",))
+        if status_id:
+            chosen = CandidateAction(
+                target_testid=status_id,
+                action="select",
+                value="Live",
+                rationale="set listing status to Live",
+                confidence=0.85,
+            )
+            if finish_id:
+                candidates.append(click(finish_id, "save after status", 0.8))
+            return ExploreResult(candidates=[chosen, *candidates], chosen=chosen)
         if finish_id:
             chosen = click(finish_id, "make listing public", 0.85)
             return ExploreResult(candidates=[chosen], chosen=chosen)

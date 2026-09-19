@@ -89,7 +89,7 @@ def load_cached_adapter(
     adapter = EnvironmentAdapter.model_validate_json(
         adapter_file.read_text(encoding="utf-8")
     )
-    if adapter.app_id != "store-b":
+    if adapter.app_id != current_target().app_id:
         return None
     if not adapter.mappings:
         return None

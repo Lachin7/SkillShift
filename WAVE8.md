@@ -83,7 +83,7 @@ Nice: dashboard shows app + adapter version per app; a Skills × Apps matrix; le
 
 Defer: Store C invalidation, ¥ currency formatting, a fifth app, OmniParser, raw video.
 
-Note for 7F: dashboard does not render perturbation flags; they live on `/store-b` judge controls.
+Note for 7F: dashboard does not render perturbation flags; they live on `/store-b` judge controls. Store C/D appear on the home page; the dashboard app card stays 7F-owned.
 
 ## Demo beats after Wave 8
 

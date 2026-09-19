@@ -111,12 +111,13 @@ def _details_followups(
     extras: list[CandidateAction] = []
     if (
         step.intent == INTENT_DETAILS
-        and "store-b-field-price" in ids
-        and "store-b-field-price" not in already
+        and any(item.endswith(("-field-price", "-field-amount")) for item in ids)
+        and not any(item.endswith(("-field-price", "-field-amount")) for item in already)
     ):
+        price_id = next(item for item in ids if item.endswith(("-field-price", "-field-amount")))
         extras.append(
             CandidateAction(
-                target_testid="store-b-field-price",
+                target_testid=price_id,
                 action="fill",
                 value=product.price,
                 rationale="complete price for details step",
@@ -167,11 +168,14 @@ def _start_targets_for_memory(trail: list[str]) -> list[str]:
 def _publish_targets_for_memory(trail: list[str]) -> list[str]:
     """Remember the finish control, not decoys or the resulting product card."""
     unique = list(dict.fromkeys(trail))
+    status = [item for item in unique if item.endswith("-field-status")]
     finish = [
         item
         for item in unique
         if item.endswith(("-go-live", "-launch-product", "-publish", "-save-row"))
     ]
+    if status and finish:
+        return [status[0], finish[-1]]
     if finish:
         return finish[-1:]
     cleaned = [
@@ -264,8 +268,11 @@ def ground_skill_step(
         else:
             if step.intent == INTENT_PUBLISH and _product_live(hands, product):
                 adapter = mark_mapping_success(adapter, step.intent, reusable=True)
-                if mapping_for_intent(adapter, INTENT_SHIPPING):
-                    adapter = mark_mapping_success(adapter, INTENT_SHIPPING, reusable=True)
+                for mapping in adapter.mappings:
+                    if mapping.semantic_intent.startswith("satisfy environment prerequisite"):
+                        adapter = mark_mapping_success(
+                            adapter, mapping.semantic_intent, reusable=True
+                        )
                 return adapter, Verification(
                     step_intent=step.intent,
                     expected_state=step.expected_state,
@@ -384,7 +391,7 @@ def ground_skill_step(
                     adapter,
                     step,
                     finish_targets
-                    or [t for t in trail if t.endswith(("-go-live", "-launch-product", "-publish", "-save-row"))]
+                    or [t for t in trail if t.endswith(("-go-live", "-launch-product", "-publish", "-save-row", "-field-status"))]
                     or trail[-1:],
                     confidence=0.9,
                     learned_from="recovery",
@@ -535,10 +542,24 @@ def _recover_prerequisite(
     observation = observe_app(hands)
     elements = elements_from_observation(observation)
     ids = {item.get("testid") for item in elements}
+    status_id = first_suffix(ids, ("-field-status",))
+    if step.intent == INTENT_PUBLISH and status_id:
+        execute_candidate(
+            hands,
+            CandidateAction(
+                target_testid=status_id,
+                action="select",
+                value="Live",
+                rationale="set live status after prerequisite",
+                confidence=0.9,
+            ),
+            product=product,
+        )
+        observation = observe_app(hands)
+        elements = elements_from_observation(observation)
+        ids = {item.get("testid") for item in elements}
     finish_id = first_suffix(ids, FINISH_SUFFIXES)
     if step.intent == INTENT_PUBLISH and finish_id:
-        from .models import CandidateAction
-
         chosen = CandidateAction(
             target_testid=finish_id,
             action="click",
@@ -593,10 +614,18 @@ def _recover_prerequisite(
         )
     else:
         _log("  patch held — retry did not verify")
+    publish_trail: list[str] = []
+    if step.intent == INTENT_PUBLISH:
+        if status_id:
+            publish_trail.append(status_id)
+        if finish_id:
+            publish_trail.append(finish_id)
+        elif chosen.target_testid not in publish_trail:
+            publish_trail.append(chosen.target_testid)
     return adapter, last, (
-        [recovery.target_testid, chosen.target_testid]
-        if step.intent != INTENT_PUBLISH
-        else [chosen.target_testid]
+        publish_trail
+        if step.intent == INTENT_PUBLISH
+        else [recovery.target_testid, chosen.target_testid]
     )
 
 

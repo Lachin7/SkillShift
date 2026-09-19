@@ -167,9 +167,11 @@ def fetch_store_b_state(hands, product_name: str | None) -> dict[str, Any] | Non
     base = getattr(hands, "base_url", "") or ""
     if not base:
         return None
-    url = f"{base.rstrip('/')}/api/store-b-state"
+    from .targets import current_target
+
+    url = f"{base.rstrip('/')}/api/store-b-state?app={quote(current_target().app_id)}"
     if product_name:
-        url = f"{url}?title={quote(product_name)}"
+        url = f"{url}&title={quote(product_name)}"
     try:
         with urlopen(url, timeout=2) as response:  # noqa: S310 — local demo URL
             payload = json.loads(response.read().decode("utf-8"))
@@ -316,7 +318,9 @@ def _verify_mock(
         )
 
     if "sellable" in intent or "creating" in intent or "start" in intent:
-        if "store-b-field-name" in ids:
+        name_id = next((ref for ref in ids if ref.endswith(("-field-name", "-field-title"))), None)
+        create_id = next((ref for ref in ids if ref.endswith(("-create-listing", "-new-row"))), None)
+        if name_id:
             return pack(
                 matched=True,
                 observed="product creation form visible with name/price/image fields",
@@ -324,7 +328,9 @@ def _verify_mock(
                 failure="none",
                 confidence=0.95,
             )
-        if "store-b-create-listing" in ids and heading_l.startswith("inventory"):
+        if create_id and (
+            heading_l.startswith("inventory") or "listings" in heading_l
+        ):
             return pack(
                 matched=False,
                 observed="inventory section; create listing available",
@@ -334,7 +340,7 @@ def _verify_mock(
                 hypothesis="Need to open Create Listing",
                 alternative="Click Create Listing",
             )
-        if "collections" in heading_l or "store-b-collections-create" in ids:
+        if "collections" in heading_l or any("collections-create" in ref for ref in ids):
             return pack(
                 matched=False,
                 observed="collection management interface",
@@ -355,8 +361,10 @@ def _verify_mock(
         )
 
     if "basic product information" in intent:
-        name_ok = bool(_field_value(hands, "store-b-field-name"))
-        price_ok = bool(_field_value(hands, "store-b-field-price"))
+        name_id = next((ref for ref in ids if ref.endswith(("-field-name", "-field-title"))), None)
+        price_id = next((ref for ref in ids if ref.endswith(("-field-price", "-field-amount"))), None)
+        name_ok = bool(name_id and _field_value(hands, name_id))
+        price_ok = bool(price_id and _field_value(hands, price_id))
         matched = name_ok and price_ok
         return pack(
             matched=matched,
@@ -369,9 +377,23 @@ def _verify_mock(
     if "image" in intent or "attach" in intent:
         matched = False
         try:
-            matched = hands.page.locator(".b-preview img").count() > 0
+            matched = hands.page.locator(".b-preview img, .media-preview").count() > 0
         except Exception:
-            matched = "store-b-field-image" in ids
+            matched = False
+        if not matched:
+            try:
+                matched = bool(
+                    hands.page.evaluate(
+                        """() => {
+                          const el = document.querySelector(
+                            "[data-testid$='-field-image'], [data-testid$='-field-photo']"
+                          );
+                          return !!(el && el.files && el.files.length);
+                        }"""
+                    )
+                )
+            except Exception:
+                matched = False
         return pack(
             matched=matched,
             observed="image preview visible" if matched else "no image preview",
@@ -434,6 +456,27 @@ def _verify_mock(
                     "that was not part of the original skill."
                 ),
                 alternative="Set the shipping category control, then retry publish",
+            )
+        category = _field_value(
+            hands,
+            next((ref for ref in ids if ref.endswith("-field-category")), "store-c-field-category"),
+        )
+        category_blocker = any("category" in msg.lower() for msg in blocker_msgs) or any(
+            ref.endswith("-category-blocker") for ref in ids
+        )
+        if category_blocker or (
+            not category
+            and any(ref.endswith("-field-category") for ref in ids)
+            and any(ref.endswith("-field-status") for ref in ids)
+        ):
+            return pack(
+                matched=False,
+                observed="status Live blocked; category empty; category blocker visible.",
+                mismatch="missing_prerequisite",
+                failure="missing_prerequisite",
+                confidence=0.9,
+                hypothesis="This environment requires a category before a listing can go Live.",
+                alternative="Set the category control, then set status Live and save.",
             )
         if enabled is False and (tax_blocker or (not tax and any(ref.endswith("-field-tax-class") for ref in ids))):
             return pack(

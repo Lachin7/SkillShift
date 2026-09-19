@@ -8,6 +8,7 @@ Do not invent extra seller features, auth, or a database.
 | --- | --- | --- | --- | --- | --- |
 | `/store-a` | `store-a` | Multi-step wizard | `Products → Add Product → Media → Publish` | Publish | Product card |
 | `/store-b` | `store-b` | Single-page form | `Inventory → Create Listing` | Go Live | Product card |
+| `/store-c` | `store-c` | Table + drawer | `Listings → Add row` | Status Live + Save row | Product card |
 | `/dashboard` | — | Four cards | — | — | Skill / App / Adapter / Status |
 
 Store B nav **must** include a plausible decoy:
@@ -72,6 +73,16 @@ Agent A should put these `data-testid` values on the real controls so Wave 2 Pla
 - `store-b-go-live`
 - `store-b-product-card`
 - `store-b-collections-create`
+
+### Store C
+
+Northwind Market. Prerequisite is **category**, not shipping. Finish is two actions: `store-c-field-status` → Live, then `store-c-save-row`.
+
+- `store-c-nav-overview`, `store-c-nav-listings`, `store-c-nav-payouts`
+- `store-c-new-row`, `store-c-row-edit`, `store-c-drawer`, `store-c-drawer-close`
+- `store-c-field-title`, `store-c-field-amount`, `store-c-field-photo`, `store-c-field-category`
+- `store-c-field-status`, `store-c-save-row`, `store-c-category-blocker`
+- `store-c-row-status`, `store-c-product-card`
 
 ## Perturbations (Store B judge controls)
 

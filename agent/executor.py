@@ -161,7 +161,11 @@ class BrowserHands:
         record_action()
 
     def select(self, testid: str, value: str) -> None:
-        self.page.get_by_test_id(testid).select_option(value)
+        locator = self.page.get_by_test_id(testid)
+        option = locator.locator(f"option[value='{value}']")
+        if option.count() and option.get_attribute("disabled") is not None:
+            return
+        locator.select_option(value)
         from .metrics import record_action
 
         record_action()
@@ -194,7 +198,7 @@ def execute_candidate(
     elif action.action == "fill":
         value = action.value
         if value is None and product is not None:
-            if "price" in testid:
+            if "price" in testid or "amount" in testid:
                 value = product.price
             else:
                 value = product.name
@@ -267,6 +271,8 @@ def execute_resolved_targets(
             hands.type(testid, product.price)
         elif testid.endswith(("-field-image", "-field-photo")):
             hands.upload(testid, product.image)
+        elif testid.endswith("-field-status"):
+            hands.select(testid, "Live")
         elif testid.endswith(("-field-shipping", "-field-tax-class", "-field-category")):
             value = "Standard"
             if testid.endswith("-field-tax-class"):
@@ -295,7 +301,7 @@ def require_web(base_url: str | None = None) -> str:
     url = (base_url or os.environ.get("SKILLSHIFT_WEB_URL") or DEFAULT_BASE_URL).rstrip(
         "/"
     )
-    probe = f"{url}/store-b"
+    probe = f"{url}/"
     try:
         with urlopen(probe, timeout=3) as response:  # noqa: S310 — local demo URL
             status = getattr(response, "status", 200)

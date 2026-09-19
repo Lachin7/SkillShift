@@ -10,6 +10,9 @@ export default function HomePage() {
           A skill learned in Store A can acquire, repair, and persist an adapter
           for unseen Store B.
         </p>
+        <p className="home-demo">
+          Demo: Teach (A) → Watch (dashboard Run) → Store B product cards.
+        </p>
         <div className="home-split">
           <span>Skill = WHAT</span>
           <span>Adapter = HOW HERE</span>
@@ -24,6 +27,11 @@ export default function HomePage() {
             <em>Transfer</em>
             <strong>Store B</strong>
             <p>Inventory → Create Listing → Go Live</p>
+          </Link>
+          <Link className="home-card" href="/store-c">
+            <em>Unseen</em>
+            <strong>Store C</strong>
+            <p>Table → drawer → status Live → Save row</p>
           </Link>
           <Link className="home-card" href="/dashboard">
             <em>Watch</em>
