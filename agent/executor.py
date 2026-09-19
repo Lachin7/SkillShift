@@ -32,6 +32,12 @@ BLUE_SNEAKER_IMAGE = REPO_ROOT / "web" / "public" / "products" / "blue-sneaker.s
 LEATHER_BAG_IMAGE = REPO_ROOT / "web" / "public" / "products" / "leather-bag.svg"
 CERAMIC_MUG_IMAGE = REPO_ROOT / "web" / "public" / "products" / "ceramic-mug.svg"
 BRASS_LAMP_IMAGE = REPO_ROOT / "web" / "public" / "products" / "brass-lamp.svg"
+def live_products_path() -> Path:
+    from .targets import current_target
+
+    return REPO_ROOT / current_target().live_products_file
+
+
 LIVE_PRODUCTS_PATH = REPO_ROOT / "fixtures" / "live" / "store-b-products.json"
 
 PRODUCT_NAME = "Blue Sneaker"
@@ -353,10 +359,11 @@ def public_product_image(product: ProductSpec) -> str:
 
 
 def persist_live_product(product: ProductSpec) -> Path:
-    LIVE_PRODUCTS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    destination = live_products_path()
+    destination.parent.mkdir(parents=True, exist_ok=True)
     items: list[dict[str, str]] = []
-    if LIVE_PRODUCTS_PATH.is_file():
-        raw = json.loads(LIVE_PRODUCTS_PATH.read_text(encoding="utf-8"))
+    if destination.is_file():
+        raw = json.loads(destination.read_text(encoding="utf-8"))
         if isinstance(raw, list):
             items = [item for item in raw if isinstance(item, dict)]
     price = product.price if product.price.startswith("£") else f"£{product.price}"
@@ -367,8 +374,8 @@ def persist_live_product(product: ProductSpec) -> Path:
     }
     items = [item for item in items if item.get("name") != product.name]
     items.append(entry)
-    LIVE_PRODUCTS_PATH.write_text(json.dumps(items, indent=2) + "\n", encoding="utf-8")
-    return LIVE_PRODUCTS_PATH
+    destination.write_text(json.dumps(items, indent=2) + "\n", encoding="utf-8")
+    return destination
 
 
 @contextmanager

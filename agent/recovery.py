@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from .adapter import INTENT_SHIPPING, PERSISTED_ADAPTER_PATH, REPO_ROOT
+from .adapter import INTENT_SHIPPING, REPO_ROOT, persisted_adapter_path
 from .grounding import (
     elements_from_observation,
     memory_string,
@@ -233,7 +233,7 @@ def lesson_from_verification(verification: Verification) -> str | None:
 
 
 def persist(adapter: EnvironmentAdapter, path: Path | None = None) -> Path:
-    destination = path or PERSISTED_ADAPTER_PATH
+    destination = path or persisted_adapter_path()
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(
         json.dumps(adapter.model_dump(), indent=2) + "\n", encoding="utf-8"

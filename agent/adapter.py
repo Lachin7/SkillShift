@@ -12,13 +12,20 @@ from pathlib import Path
 
 from .learner import learn_skill, load_trace
 from .models import EnvironmentAdapter, Skill
+from .targets import current_target
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 TRACE_PATH = REPO_ROOT / "fixtures" / "traces" / "store-a.json"
 SKILL_FALLBACK = REPO_ROOT / "fixtures" / "skill.json"
 WRONG_ADAPTER_PATH = REPO_ROOT / "fixtures" / "adapter.wrong.json"
-PERSISTED_ADAPTER_PATH = REPO_ROOT / "adapters" / "store_b__publish_product.json"
 STORE_A_ADAPTER_PATH = REPO_ROOT / "adapters" / "store_a__publish_product.json"
+
+
+def persisted_adapter_path() -> Path:
+    return REPO_ROOT / current_target().adapter_file
+
+
+PERSISTED_ADAPTER_PATH = REPO_ROOT / "adapters" / "store_b__publish_product.json"
 
 INTENT_START = "start creating a new sellable item"
 INTENT_DETAILS = "provide basic product information"
@@ -49,14 +56,20 @@ def load_skill() -> Skill:
     return Skill.model_validate_json(SKILL_FALLBACK.read_text(encoding="utf-8"))
 
 
-def empty_store_b_adapter(skill_name: str = "publish_product") -> EnvironmentAdapter:
+def empty_adapter(app_id: str | None = None, skill_name: str = "publish_product") -> EnvironmentAdapter:
     """Cold start: no HOW HERE known yet."""
+    target_id = app_id or current_target().app_id
     return EnvironmentAdapter(
-        app_id="store-b",
+        app_id=target_id,
         skill_name=skill_name,
         mappings=[],
         failure_lessons=[],
     )
+
+
+def empty_store_b_adapter(skill_name: str = "publish_product") -> EnvironmentAdapter:
+    """Back-compat alias for empty_adapter('store-b')."""
+    return empty_adapter("store-b", skill_name)
 
 
 def load_wrong_adapter() -> EnvironmentAdapter:
@@ -70,7 +83,7 @@ def load_cached_adapter(
     path: Path | None = None,
 ) -> EnvironmentAdapter | None:
     """Load persisted Store B adapter if it has any learned mappings."""
-    adapter_file = path or PERSISTED_ADAPTER_PATH
+    adapter_file = path or persisted_adapter_path()
     if not adapter_file.is_file():
         return None
     adapter = EnvironmentAdapter.model_validate_json(

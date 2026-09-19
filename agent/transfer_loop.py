@@ -10,6 +10,7 @@ from .adapter import (
     INTENT_PUBLISH,
     INTENT_SHIPPING,
     INTENT_START,
+    empty_adapter,
     empty_store_b_adapter,
     mapping_for_intent,
     upsert_mapping,
@@ -609,8 +610,11 @@ def run_store_b_transfer(
 ) -> tuple[EnvironmentAdapter, str]:
     """Full Skill transfer onto Store B. Adapter may be empty or cached."""
     require_decision_backend()
-    state = adapter or empty_store_b_adapter(skill.name)
-    hands.goto("/store-b")
+    from .targets import current_target
+
+    target = current_target()
+    state = adapter or empty_adapter(target.app_id, skill.name)
+    hands.goto(target.path)
     demo_pause()
 
     for step in skill.steps:
