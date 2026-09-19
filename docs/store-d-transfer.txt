@@ -1,0 +1,42 @@
+Skill loaded: publish_product
+Environment: store-d unseen
+Adapter: empty — grounding via Explorer / Verifier / Recovery
+First run — discover HOW HERE
+STEP: start creating a new sellable item
+  explore[1]: click store-d-nav-inventory (Navigate to the inventory section where items/products can b)
+  diagnose: class=action_not_executed (The click on the '出品を作成' (Create Listing) button was either not perfor)
+  verify: matched=False type=transient_failure class=action_not_executed
+  recover: click store-d-create-listing (Click the '出品を作成' (Create Listing) button to open the item c)
+STEP: provide basic product information
+  explore[1]: fill store-d-field-name (Fill the product name input field with 'Leather Bag'.)
+  verify: matched=True type=none class=none
+STEP: attach the product image
+  explore[1]: upload store-d-field-image (Upload the image file to the store-d-field-image file input.)
+  verify: matched=True type=none class=none
+STEP: make the product publicly available
+  explore[1]: click store-d-publish (Clicking the '公開する' (Publish) button directly triggers the a)
+  diagnose: class=missing_prerequisite (The product cannot be published because the required shipping category)
+  verify: matched=False type=missing_prerequisite class=missing_prerequisite
+  WORKFLOW MISMATCH — missing prerequisite
+  Hypothesis: The product cannot be published because the required shipping category has not been selected, leaving the publish button disabled.
+  hypothesis score (modal): winner=A
+  recover prereq: select store-d-field-shipping
+  retry step: click store-d-publish
+  patch applied: add_prerequisite satisfy environment prerequisite: shipping category
+Product live (Leather Bag)
+Leather Bag |  | £89
+Second run — cached adapter
+STEP: start creating a new sellable item
+  cache hit: start creating a new sellable item → 在庫 > Store D Create Listing
+STEP: provide basic product information
+  cache hit: provide basic product information → Store D Field Name > Store D Field Price
+STEP: attach the product image
+  cache hit: attach the product image → Store D Field Image
+STEP: make the product publicly available
+  cache hit: make the product publicly available → Store D Publish
+reuse_gain:
+  actions: 7 - 7 = 0
+  model_calls: 13 - 3 = 10
+  recoveries: 2 - 0 = 2
+Blue Sneaker live
+Blue Sneaker |  | £120

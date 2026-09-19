@@ -9,6 +9,7 @@ Do not invent extra seller features, auth, or a database.
 | `/store-a` | `store-a` | Multi-step wizard | `Products → Add Product → Media → Publish` | Publish | Product card |
 | `/store-b` | `store-b` | Single-page form | `Inventory → Create Listing` | Go Live | Product card |
 | `/store-c` | `store-c` | Table + drawer | `Listings → Add row` | Status Live + Save row | Product card |
+| `/store-d` | `store-d` | Store B twin, Japanese labels | `在庫 → 出品を作成` | 公開する | Product card |
 | `/dashboard` | — | Four cards | — | — | Skill / App / Adapter / Status |
 
 Store B nav **must** include a plausible decoy:
@@ -83,6 +84,30 @@ Northwind Market. Prerequisite is **category**, not shipping. Finish is two acti
 - `store-c-field-title`, `store-c-field-amount`, `store-c-field-photo`, `store-c-field-category`
 - `store-c-field-status`, `store-c-save-row`, `store-c-category-blocker`
 - `store-c-row-status`, `store-c-product-card`
+
+### Store D
+
+みなと商店. Structurally a twin of Store B; every visible string is Japanese. `data-testid` values stay ASCII (hands infrastructure, not brain semantics). Finish is `store-d-publish`, not `*-go-live`. Field order: price, name, shipping, image, listing type.
+
+| Element | Copy |
+| --- | --- |
+| Brand | みなと商店 |
+| Nav | コレクション / 在庫 / 注文 |
+| Inventory heading | 在庫一覧 |
+| Create | 出品を作成 |
+| Form heading | 出品の作成 |
+| Fields | 価格 / 商品名 / 配送カテゴリ / 商品画像 / 公開設定 |
+| Shipping options | 選択してください / 通常配送 / 速達 / 大型便 |
+| Listing type | 公開 / 下書き |
+| Finish | 公開する |
+| Cancel | キャンセル |
+| Blocker | 公開するには配送カテゴリを選択してください。 |
+| Empty inventory | 出品はまだありません。 |
+
+- `store-d-nav-collections`, `store-d-nav-inventory`, `store-d-nav-orders`
+- `store-d-create-listing`
+- `store-d-field-price`, `store-d-field-name`, `store-d-field-shipping`, `store-d-field-image`, `store-d-field-listing-type`
+- `store-d-shipping-blocker`, `store-d-publish`, `store-d-product-card`
 
 ## Perturbations (Store B judge controls)
 

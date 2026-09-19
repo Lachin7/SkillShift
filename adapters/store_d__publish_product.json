@@ -1,0 +1,73 @@
+{
+  "app_id": "store-d",
+  "skill_name": "publish_product",
+  "mappings": [
+    {
+      "semantic_intent": "start creating a new sellable item",
+      "app_action": "\u5728\u5eab > Store D Create Listing",
+      "confidence": 0.75,
+      "learned_from": "recovery",
+      "resolved_targets": [
+        "store-d-nav-inventory",
+        "store-d-create-listing"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "provide basic product information",
+      "app_action": "Store D Field Name > Store D Field Price",
+      "confidence": 0.9,
+      "learned_from": "exploration",
+      "resolved_targets": [
+        "store-d-field-name",
+        "store-d-field-price"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "attach the product image",
+      "app_action": "Store D Field Image",
+      "confidence": 0.9,
+      "learned_from": "exploration",
+      "resolved_targets": [
+        "store-d-field-image"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "satisfy environment prerequisite: shipping category",
+      "app_action": "\u9078\u629e\u3057\u3066\u304f\u3060\u3055\u3044",
+      "confidence": 0.9,
+      "learned_from": "recovery",
+      "resolved_targets": [
+        "store-d-field-shipping"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "make the product publicly available",
+      "app_action": "Store D Publish",
+      "confidence": 0.9,
+      "learned_from": "recovery",
+      "resolved_targets": [
+        "store-d-publish"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    }
+  ],
+  "failure_lessons": [
+    "create control visible; form not open",
+    "This environment requires an extra prerequisite before publish."
+  ],
+  "adapter_version": 2
+}

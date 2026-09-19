@@ -33,6 +33,11 @@ export default function HomePage() {
             <strong>Store C</strong>
             <p>Table → drawer → status Live → Save row</p>
           </Link>
+          <Link className="home-card" href="/store-d">
+            <em>Localized</em>
+            <strong>Store D</strong>
+            <p>みなと商店 — same IA as B, Japanese labels</p>
+          </Link>
           <Link className="home-card" href="/dashboard">
             <em>Watch</em>
             <strong>Dashboard</strong>

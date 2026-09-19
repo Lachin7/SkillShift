@@ -127,6 +127,28 @@ def verify_independent(
             api_state=api_state,
             model=resolved,
         )
+    if _is_publish_step(skill_step) and not verification.matched:
+        enabled = _go_live_enabled(hands, observation)
+        api_ok = bool(
+            api_state
+            and api_state.get("status") == "published"
+            and product_name
+            and str(api_state.get("title") or "").lower() == product_name.lower()
+        )
+        card_ok = _product_card_visible(hands, product_name)
+        if enabled is False:
+            card_ok = False
+            api_ok = False
+        if card_ok or api_ok:
+            verification = verification.model_copy(
+                update={
+                    "matched": True,
+                    "mismatch_type": "none",
+                    "failure_class": "none",
+                    "observed_state": "public product card visible",
+                    "confidence": max(verification.confidence, 0.95),
+                }
+            )
     result = verification_to_result(verification)
     return verification, result
 
@@ -328,12 +350,10 @@ def _verify_mock(
                 failure="none",
                 confidence=0.95,
             )
-        if create_id and (
-            heading_l.startswith("inventory") or "listings" in heading_l
-        ):
+        if create_id:
             return pack(
                 matched=False,
-                observed="inventory section; create listing available",
+                observed="create control visible; form not open",
                 mismatch="wrong_navigation",
                 failure="navigation_error",
                 confidence=0.7,

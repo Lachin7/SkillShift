@@ -50,6 +50,15 @@ TARGETS: dict[str, AppTarget] = {
         live_products_file="fixtures/live/store-c-products.json",
         adapter_file="adapters/store_c__publish_product.json",
     ),
+    "store-d": AppTarget(
+        app_id="store-d",
+        label="Store D",
+        path="/store-d",
+        testid_prefix="store-d-",
+        product_card_testid="store-d-product-card",
+        live_products_file="fixtures/live/store-d-products.json",
+        adapter_file="adapters/store_d__publish_product.json",
+    ),
 }
 
 

@@ -207,6 +207,8 @@ def execute_candidate(
         hands.type(testid, value)
     elif action.action == "upload":
         path = action.value or (str(product.image) if product else None)
+        if path and not Path(path).is_file() and product is not None:
+            path = str(product.image)
         if not path:
             raise RuntimeError(f"upload action missing path for {testid}")
         hands.upload(testid, path)
