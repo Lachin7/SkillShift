@@ -1,0 +1,41 @@
+{
+  "phase": "recovered",
+  "skill": {
+    "name": "publish_product",
+    "title": "Publish Product",
+    "steps": [
+      "Create item",
+      "Add details",
+      "Add image",
+      "Publish"
+    ]
+  },
+  "app": {
+    "app_id": "store-b",
+    "label": "Store B",
+    "unseen": true
+  },
+  "adapter": {
+    "skill_name": "publish_product",
+    "mappings": [
+      {
+        "label": "Create item",
+        "app_action": "Inventory > Create Listing",
+        "semantic_intent": "start creating a new sellable item",
+        "highlight": null
+      },
+      {
+        "label": "Publish",
+        "app_action": "Go Live",
+        "semantic_intent": "make the product publicly available",
+        "highlight": null
+      }
+    ]
+  },
+  "status": {
+    "skill_loaded": true,
+    "adapter_learned": true,
+    "product_live": true,
+    "message": "Adapter recovered. Product live."
+  }
+}

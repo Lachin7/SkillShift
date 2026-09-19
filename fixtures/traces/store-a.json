@@ -1,0 +1,44 @@
+[
+  {
+    "before": "fixtures/traces/frames/frame_01.png",
+    "action": "click",
+    "target": "Add Product",
+    "value": null,
+    "after": "fixtures/traces/frames/frame_02.png"
+  },
+  {
+    "before": "fixtures/traces/frames/frame_02.png",
+    "action": "fill",
+    "target": "Product name",
+    "value": "Leather Bag",
+    "after": "fixtures/traces/frames/frame_03.png"
+  },
+  {
+    "before": "fixtures/traces/frames/frame_03.png",
+    "action": "fill",
+    "target": "Price",
+    "value": "89",
+    "after": "fixtures/traces/frames/frame_04.png"
+  },
+  {
+    "before": "fixtures/traces/frames/frame_04.png",
+    "action": "upload",
+    "target": "Product image",
+    "value": "/products/leather-bag.svg",
+    "after": "fixtures/traces/frames/frame_05.png"
+  },
+  {
+    "before": "fixtures/traces/frames/frame_05.png",
+    "action": "click",
+    "target": "Continue to Media",
+    "value": null,
+    "after": "fixtures/traces/frames/frame_06.png"
+  },
+  {
+    "before": "fixtures/traces/frames/frame_06.png",
+    "action": "click",
+    "target": "Continue to Publish",
+    "value": null,
+    "after": "fixtures/traces/frames/frame_07.png"
+  }
+]

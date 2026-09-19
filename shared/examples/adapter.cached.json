@@ -1,0 +1,33 @@
+{
+  "app_id": "store-b",
+  "skill_name": "publish_product",
+  "mappings": [
+    {
+      "semantic_intent": "start creating a new sellable item",
+      "app_action": "Inventory > Create Listing",
+      "confidence": 0.95,
+      "learned_from": "cached"
+    },
+    {
+      "semantic_intent": "provide basic product information",
+      "app_action": "Fill name and price on the Create Listing form",
+      "confidence": 0.95,
+      "learned_from": "cached"
+    },
+    {
+      "semantic_intent": "attach the product image",
+      "app_action": "Upload image on the Create Listing form",
+      "confidence": 0.95,
+      "learned_from": "cached"
+    },
+    {
+      "semantic_intent": "make the product publicly available",
+      "app_action": "Go Live",
+      "confidence": 0.95,
+      "learned_from": "cached"
+    }
+  ],
+  "failure_lessons": [
+    "Collections is collection management, not product creation"
+  ]
+}

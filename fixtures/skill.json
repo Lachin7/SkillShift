@@ -1,0 +1,32 @@
+{
+  "name": "publish_product",
+  "goal": "Create and publish a sellable product listing",
+  "inputs": ["name", "price", "image"],
+  "steps": [
+    {
+      "intent": "start creating a new sellable item",
+      "required_inputs": [],
+      "expected_state": "a product creation form is visible",
+      "success_condition": "a form with name, price, and image fields is on screen"
+    },
+    {
+      "intent": "provide basic product information",
+      "required_inputs": ["name", "price"],
+      "expected_state": "name and price are populated",
+      "success_condition": "the form shows the provided name and price"
+    },
+    {
+      "intent": "attach the product image",
+      "required_inputs": ["image"],
+      "expected_state": "product image preview is visible",
+      "success_condition": "an image preview appears on the listing"
+    },
+    {
+      "intent": "make the product publicly available",
+      "required_inputs": [],
+      "expected_state": "product is published",
+      "success_condition": "a public product card is visible"
+    }
+  ],
+  "final_success_condition": "a sellable product card exists with the given name, price, and image"
+}

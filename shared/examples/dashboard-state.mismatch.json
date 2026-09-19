@@ -1,0 +1,41 @@
+{
+  "phase": "mismatch",
+  "skill": {
+    "name": "publish_product",
+    "title": "Publish Product",
+    "steps": [
+      "Create item",
+      "Add details",
+      "Add image",
+      "Publish"
+    ]
+  },
+  "app": {
+    "app_id": "store-b",
+    "label": "Store B",
+    "unseen": true
+  },
+  "adapter": {
+    "skill_name": "publish_product",
+    "mappings": [
+      {
+        "label": "Create item",
+        "app_action": "Collections > Create",
+        "semantic_intent": "start creating a new sellable item",
+        "highlight": "error"
+      },
+      {
+        "label": "Publish",
+        "app_action": "Go Live",
+        "semantic_intent": "make the product publicly available",
+        "highlight": null
+      }
+    ]
+  },
+  "status": {
+    "skill_loaded": true,
+    "adapter_learned": false,
+    "product_live": false,
+    "message": "ADAPTER MISMATCH DETECTED — Collections is not product creation. Alternative: Inventory"
+  }
+}

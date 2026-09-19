@@ -1,0 +1,8 @@
+{
+  "step_intent": "start creating a new sellable item",
+  "expected_state": "a product creation form containing image, title and price inputs",
+  "observed_state": "collection management interface",
+  "matched": false,
+  "hypothesis": "Collections was incorrectly mapped to product creation",
+  "alternative": "Inventory"
+}
