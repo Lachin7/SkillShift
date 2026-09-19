@@ -34,6 +34,7 @@ from agent.executor import (  # noqa: E402
     open_hands,
 )
 from agent.targets import current_target  # noqa: E402
+from agent.env import load_env_file  # noqa: E402
 from agent.grounding import require_decision_backend  # noqa: E402
 from agent.models import EnvironmentAdapter  # noqa: E402
 from agent.recovery import mark_cached, persist, persist_cached  # noqa: E402
@@ -123,13 +124,25 @@ def write_dashboard(
     return LIVE_DASHBOARD
 
 
+def _reset_requested(args: list[str] | None = None) -> bool:
+    """--reset / --cold forces the cold start beat even if an adapter is warm."""
+    argv = sys.argv[1:] if args is None else args
+    if any(flag in {"--reset", "--cold"} for flag in argv):
+        return True
+    return os.environ.get("SKILLSHIFT_RESET_ADAPTER", "").lower() in {"1", "true", "yes"}
+
+
 def main() -> int:
+    load_env_file()
     require_decision_backend()
     skill = load_skill()
     if len(skill.steps) != 4:
         raise RuntimeError("Skill must stay four frozen intents.")
 
     target = current_target()
+    if _reset_requested():
+        written = persist(empty_adapter(target.app_id, skill.name))
+        _log(f"Reset: emptied {written.name} — forcing cold start")
     cached = load_cached_adapter()
     cold = cached is None or not cached.mappings or cached.app_id != target.app_id
     adapter = empty_adapter(target.app_id, skill.name) if cold else cached

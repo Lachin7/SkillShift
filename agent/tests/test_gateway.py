@@ -39,7 +39,9 @@ def test_rule_instruction_mentions_visible_only():
 
 
 def test_configured_model_prefers_gateway(monkeypatch):
+    monkeypatch.delenv("SKILLSHIFT_MOCK_LLM", raising=False)
     monkeypatch.delenv("SKILLSHIFT_MODEL", raising=False)
+    monkeypatch.delenv("SKILLSHIFT_USE_GATEWAY", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
     monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
@@ -51,6 +53,19 @@ def test_configured_model_prefers_gateway(monkeypatch):
     assert gateway_model() == DEFAULT_GATEWAY_MODEL
     assert configured_model() == DEFAULT_GATEWAY_MODEL
     assert require_decision_backend() == DEFAULT_GATEWAY_MODEL
+
+
+def test_materialize_aistudio_model(monkeypatch):
+    from agent.gateway import materialize_model
+    from pydantic_ai.models.openai import OpenAIChatModel
+
+    monkeypatch.setenv("PYDANTIC_AI_GATEWAY_API_KEY", "pylf_v2_eu_testkey")
+    monkeypatch.setenv(
+        "PYDANTIC_AI_GATEWAY_BASE_URL", "https://gateway-eu.pydantic.dev/proxy"
+    )
+    model = materialize_model("gateway/aistudio:models/gemini-3.6-flash")
+    assert isinstance(model, OpenAIChatModel)
+    assert materialize_model("google:gemini-3.6-flash") == "google:gemini-3.6-flash"
 
 
 def test_skillshift_model_override_beats_gateway(monkeypatch):

@@ -1,0 +1,120 @@
+# captured 2026-09-19T16:56:47Z
+# command: SKILLSHIFT_TARGET_APP=store-c python -m agent.run_transfer --reset
+# Store C = listings TABLE + editing drawer + status dropdown. There is no publish button.
+# It calls the product field 'Title' and the price field 'Amount'.
+
+Reset: emptied store_c__publish_product.json — forcing cold start
+Skill loaded: publish_product
+Environment: store-c unseen
+Adapter: empty — grounding via Explorer / Verifier / Recovery
+First run — discover HOW HERE
+STEP: start creating a new sellable item
+  explore[1]: click store-c-new-row (Clicking 'Add row' creates a new item/listing row in the tab)
+  verify: matched=True type=none class=none
+STEP: provide basic product information
+  explore[1]: fill store-c-field-title (Fill Title field with product name "Leather Bag")
+  verify: matched=True type=none class=none
+STEP: attach the product image
+  explore[1]: upload store-c-field-photo (Upload the product image file using the photo file input ele)
+  verify: matched=True type=none class=none
+STEP: make the product publicly available
+  explore[1]: select store-c-field-status (Select 'Live' status in the status field to make the product)
+  diagnose: class=missing_prerequisite (The product cannot be published (set to Live) because the category pre)
+  verify: matched=False type=missing_prerequisite class=missing_prerequisite
+  WORKFLOW MISMATCH — missing prerequisite
+  Hypothesis: The product cannot be published (set to Live) because the category prerequisite has not been selected yet.
+  hypothesis score (modal): winner=A
+  recover prereq: select store-c-field-category
+  retry step: click store-c-save-row
+  patch applied: add_prerequisite satisfy environment prerequisite: category
+Product live (Leather Bag)
+Leather Bag |  | £89
+Second run — cached adapter
+STEP: start creating a new sellable item
+  cache hit: start creating a new sellable item → Add row
+STEP: provide basic product information
+  cache hit: provide basic product information → Store C Field Title > Store C Field Amount
+STEP: attach the product image
+  cache hit: attach the product image → Store C Field Photo
+STEP: make the product publicly available
+  cache hit: make the product publicly available → Store C Field Status > Store C Save Row
+reuse_gain:
+  actions: 7 - 7 = 0
+  model_calls: 11 - 3 = 8
+  recoveries: 1 - 0 = 1
+Blue Sneaker live
+Blue Sneaker |  | £120
+
+===== adapters/store_c__publish_product.json AFTER =====
+{
+  "app_id": "store-c",
+  "skill_name": "publish_product",
+  "mappings": [
+    {
+      "semantic_intent": "start creating a new sellable item",
+      "app_action": "Add row",
+      "confidence": 0.95,
+      "learned_from": "exploration",
+      "resolved_targets": [
+        "store-c-new-row"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "provide basic product information",
+      "app_action": "Store C Field Title > Store C Field Amount",
+      "confidence": 0.9,
+      "learned_from": "exploration",
+      "resolved_targets": [
+        "store-c-field-title",
+        "store-c-field-amount"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "attach the product image",
+      "app_action": "Store C Field Photo",
+      "confidence": 0.95,
+      "learned_from": "exploration",
+      "resolved_targets": [
+        "store-c-field-photo"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "satisfy environment prerequisite: category",
+      "app_action": "Select category",
+      "confidence": 0.9,
+      "learned_from": "recovery",
+      "resolved_targets": [
+        "store-c-field-category"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "make the product publicly available",
+      "app_action": "Store C Field Status > Store C Save Row",
+      "confidence": 0.9,
+      "learned_from": "recovery",
+      "resolved_targets": [
+        "store-c-field-status",
+        "store-c-save-row"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    }
+  ],
+  "failure_lessons": [
+    "The product cannot be published (set to Live) because the category prerequisite has not been selected yet."
+  ],
+  "adapter_version": 2
+}

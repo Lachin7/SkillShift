@@ -1,0 +1,72 @@
+{
+  "app_id": "store-c",
+  "skill_name": "publish_product",
+  "mappings": [
+    {
+      "semantic_intent": "start creating a new sellable item",
+      "app_action": "Add row",
+      "confidence": 0.85,
+      "learned_from": "exploration",
+      "resolved_targets": [
+        "store-c-new-row"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "provide basic product information",
+      "app_action": "Store C Field Title > Store C Field Amount",
+      "confidence": 0.9,
+      "learned_from": "exploration",
+      "resolved_targets": [
+        "store-c-field-title",
+        "store-c-field-amount"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "attach the product image",
+      "app_action": "Store C Field Photo",
+      "confidence": 0.9,
+      "learned_from": "exploration",
+      "resolved_targets": [
+        "store-c-field-photo"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "satisfy environment prerequisite: category",
+      "app_action": "Select category",
+      "confidence": 0.9,
+      "learned_from": "recovery",
+      "resolved_targets": [
+        "store-c-field-category"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "make the product publicly available",
+      "app_action": "Store C Field Status > Store C Save Row",
+      "confidence": 0.9,
+      "learned_from": "recovery",
+      "resolved_targets": [
+        "store-c-field-status",
+        "store-c-save-row"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    }
+  ],
+  "failure_lessons": [
+    "This environment requires a category before a listing can go Live."
+  ],
+  "adapter_version": 2
+}

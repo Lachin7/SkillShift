@@ -153,6 +153,7 @@ def _start_targets_for_memory(trail: list[str]) -> list[str]:
                 "-go-live",
                 "-launch-product",
                 "-publish",
+                "-release",
                 "-product-card",
                 "-field-shipping",
                 "-field-tax-class",
@@ -172,7 +173,7 @@ def _publish_targets_for_memory(trail: list[str]) -> list[str]:
     finish = [
         item
         for item in unique
-        if item.endswith(("-go-live", "-launch-product", "-publish", "-save-row"))
+        if item.endswith(("-go-live", "-launch-product", "-publish", "-save-row", "-release"))
     ]
     if status and finish:
         return [status[0], finish[-1]]
@@ -391,7 +392,7 @@ def ground_skill_step(
                     adapter,
                     step,
                     finish_targets
-                    or [t for t in trail if t.endswith(("-go-live", "-launch-product", "-publish", "-save-row", "-field-status"))]
+                    or [t for t in trail if t.endswith(("-go-live", "-launch-product", "-publish", "-save-row", "-release", "-field-status"))]
                     or trail[-1:],
                     confidence=0.9,
                     learned_from="recovery",
@@ -400,6 +401,15 @@ def ground_skill_step(
                 if stale_repair:
                     adapter = adapter.model_copy(deep=True)
                     adapter.adapter_version += 1
+                record_loop_event(
+                    semantic_step=step.intent,
+                    control=f"recovered {' > '.join(finish_targets) or 'retry'}",
+                    verification="passed",
+                    failure_class="none",
+                    # The prerequisite event above already reports the patch.
+                    patch=None,
+                    mapping_count=len(adapter.mappings),
+                )
                 return adapter, last
             continue
 
@@ -459,6 +469,14 @@ def ground_skill_step(
                 confidence=recovery.confidence,
                 learned_from="recovery",
                 elements=hands.visible_elements(),
+            )
+            record_loop_event(
+                semantic_step=step.intent,
+                control=f"recovered {recovery.action} {recovery.target_testid}",
+                verification="passed",
+                failure_class="none",
+                patch=nav_patch.operation if nav_patch else None,
+                mapping_count=len(adapter.mappings),
             )
             return adapter, last
 

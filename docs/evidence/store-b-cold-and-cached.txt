@@ -1,0 +1,148 @@
+# captured 2026-09-19T16:59:51Z
+# command: python -m agent.run_transfer --reset
+# Real Gemini (google:gemini-3.6-flash) via .env autoload; GEMINI_API_KEY deliberately unset in the shell.
+# --reset empties adapters/store_b__publish_product.json first, so this is a genuine cold start.
+
+===== RUN =====
+Reset: emptied store_b__publish_product.json — forcing cold start
+Skill loaded: publish_product
+Environment: store-b unseen
+Adapter: empty — grounding via Explorer / Verifier / Recovery
+First run — discover HOW HERE
+STEP: start creating a new sellable item
+  explore[1]: click store-b-nav-inventory (Navigating to Inventory is required to create a new sellable)
+  diagnose: class=action_not_executed (The step intended to initiate item creation, but the 'Create Listing' )
+  verify: matched=False type=transient_failure class=action_not_executed
+  recover: click store-b-create-listing (Click the 'Create Listing' button to start creating a new se)
+STEP: provide basic product information
+  explore[1]: fill store-b-field-name (Fill the product name field with 'Leather Bag' to provide ba)
+  verify: matched=True type=none class=none
+STEP: attach the product image
+  explore[1]: upload store-b-field-image (Upload the product image file to the image field.)
+  verify: matched=True type=none class=none
+STEP: make the product publicly available
+  explore[1]: click store-b-go-live (Click 'Go Live' button to publish the product publicly.)
+  diagnose: class=missing_prerequisite (The 'Go Live' button is disabled because the required 'Shipping catego)
+  verify: matched=False type=missing_prerequisite class=missing_prerequisite
+  WORKFLOW MISMATCH — missing prerequisite
+  Hypothesis: The 'Go Live' button is disabled because the required 'Shipping category' field has not been selected.
+  hypothesis score (modal): winner=A
+  recover prereq: select store-b-field-shipping
+  retry step: click store-b-go-live
+  patch applied: add_prerequisite satisfy environment prerequisite: shipping category
+Product live (Leather Bag)
+Leather Bag |  | £89
+Second run — cached adapter
+STEP: start creating a new sellable item
+  cache hit: start creating a new sellable item → Inventory > Create Listing
+STEP: provide basic product information
+  cache hit: provide basic product information → Leather Bag > 89
+STEP: attach the product image
+  cache hit: attach the product image → Field Image
+STEP: make the product publicly available
+  cache hit: make the product publicly available → Go Live
+reuse_gain:
+  actions: 7 - 7 = 0
+  model_calls: 13 - 3 = 10
+  recoveries: 2 - 0 = 2
+Blue Sneaker live
+Blue Sneaker |  | £120
+
+===== adapters/store_b__publish_product.json AFTER (learned, persisted) =====
+{
+  "app_id": "store-b",
+  "skill_name": "publish_product",
+  "mappings": [
+    {
+      "semantic_intent": "start creating a new sellable item",
+      "app_action": "Inventory > Create Listing",
+      "confidence": 0.95,
+      "learned_from": "recovery",
+      "resolved_targets": [
+        "store-b-nav-inventory",
+        "store-b-create-listing"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "provide basic product information",
+      "app_action": "Leather Bag > 89",
+      "confidence": 0.95,
+      "learned_from": "exploration",
+      "resolved_targets": [
+        "store-b-field-name",
+        "store-b-field-price"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "attach the product image",
+      "app_action": "Field Image",
+      "confidence": 0.95,
+      "learned_from": "exploration",
+      "resolved_targets": [
+        "store-b-field-image"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "satisfy environment prerequisite: shipping category",
+      "app_action": "Select category",
+      "confidence": 0.9,
+      "learned_from": "recovery",
+      "resolved_targets": [
+        "store-b-field-shipping"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "make the product publicly available",
+      "app_action": "Go Live",
+      "confidence": 0.9,
+      "learned_from": "recovery",
+      "resolved_targets": [
+        "store-b-go-live"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    }
+  ],
+  "failure_lessons": [
+    "The step intended to initiate item creation, but the 'Create Listing' button was not clicked or its action did not execute.",
+    "The 'Go Live' button is disabled because the required 'Shipping category' field has not been selected."
+  ],
+  "adapter_version": 2
+}
+===== fixtures/live/run-metrics.json =====
+{
+  "first": {
+    "product": "Leather Bag",
+    "actions": 7,
+    "model_calls": 13,
+    "recoveries": 2,
+    "cache_hits": 0,
+    "latency_ms": 71605
+  },
+  "second": {
+    "product": "Blue Sneaker",
+    "actions": 7,
+    "model_calls": 3,
+    "recoveries": 0,
+    "cache_hits": 4,
+    "latency_ms": 9224
+  },
+  "reuse_gain": {
+    "actions": 0,
+    "model_calls": 10,
+    "recoveries": 2
+  }
+}

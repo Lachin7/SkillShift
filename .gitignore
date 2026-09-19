@@ -2,6 +2,14 @@
 inspo/*
 !inspo/README.md
 
+# Modal skill vendor dumps (huge; not part of the product)
+.agents/skills/modal/references/api/
+.agents/skills/modal/references/examples/
+.agents/skills/modal/references/guide/
+
+# TypeScript incremental
+*.tsbuildinfo
+
 # Node
 node_modules/
 web/node_modules/
@@ -18,7 +26,7 @@ __pycache__/
 .mypy_cache/
 *.egg-info/
 dist/
-build/
+/build/
 
 # Secrets and local env
 .env
@@ -35,6 +43,7 @@ agent/runs/
 web/public/recordings/
 *.png
 !shared/**/*.png
+!docs/evidence/screens/**/*.png
 fixtures/traces/frames/
 
 # Next build (also under web/)

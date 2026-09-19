@@ -1,0 +1,52 @@
+# captured 2026-09-19T16:56:58Z
+# Judge-controlled perturbation of Store B. Flags are flipped over HTTP, mid-demo, with a WARM adapter.
+# Each flag changes the DOM contract (a data-testid disappears), so a cached trail cannot just replay.
+
+################ rename_publish = true ################
+{"rename_publish":true,"extra_required":false,"reorder_nav":false}
+-- adapter before: v2 [['store-b-nav-inventory', 'store-b-create-listing'], ['store-b-field-name', 'store-b-field-price'], ['store-b-field-image'], ['store-b-field-shipping'], ['store-b-go-live']]
+Cached run only
+  cache hit: start creating a new sellable item → Inventory > Create Listing
+  cache hit: provide basic product information → Leather Bag > 89
+  cache hit: attach the product image → Field Image
+  cache hit: make the product publicly available → Go Live
+  stale mapping: saved testid missing store-b-go-live
+  explore[1]: click store-b-launch-product (Clicking 'Launch Product' completes the publishing process t)
+  verify: matched=True type=none class=none
+  replace_mapping persisted; adapter_version=3
+-- adapter after:  v3 [['store-b-nav-inventory', 'store-b-create-listing'], ['store-b-field-name', 'store-b-field-price'], ['store-b-field-image'], ['store-b-field-shipping'], ['store-b-launch-product']]
+
+################ extra_required = true ################
+{"rename_publish":false,"extra_required":true,"reorder_nav":false}
+-- adapter before: v3 [['store-b-nav-inventory', 'store-b-create-listing'], ['store-b-field-name', 'store-b-field-price'], ['store-b-field-image'], ['store-b-field-shipping'], ['store-b-launch-product']]
+Cached run only
+  cache hit: start creating a new sellable item → Inventory > Create Listing
+  cache hit: provide basic product information → Leather Bag > 89
+  cache hit: attach the product image → Field Image
+  cache hit: make the product publicly available → Launch Product
+  stale mapping: saved testid missing store-b-launch-product
+  explore[1]: click store-b-go-live (Clicking 'Go Live' satisfies the intent to make the product )
+  diagnose: class=missing_prerequisite (The 'Go Live' button remains disabled because a required field ('Tax c)
+  verify: matched=False type=missing_prerequisite class=missing_prerequisite
+  WORKFLOW MISMATCH — missing prerequisite
+  recover prereq: select store-b-field-tax-class
+  patch applied: add_prerequisite satisfy environment prerequisite: tax class
+-- adapter after:  v5 [['store-b-nav-inventory', 'store-b-create-listing'], ['store-b-field-name', 'store-b-field-price'], ['store-b-field-image'], ['store-b-field-shipping'], ['store-b-field-tax-class'], ['store-b-go-live']]
+
+################ reorder_nav = true ################
+{"rename_publish":false,"extra_required":false,"reorder_nav":true}
+-- adapter before: v5 [['store-b-nav-inventory', 'store-b-create-listing'], ['store-b-field-name', 'store-b-field-price'], ['store-b-field-image'], ['store-b-field-shipping'], ['store-b-field-tax-class'], ['store-b-go-live']]
+Cached run only
+  cache hit: start creating a new sellable item → Inventory > Create Listing
+  stale mapping: saved testid missing store-b-nav-inventory
+  explore[1]: click store-b-nav-catalog (Navigate to Catalog where sellable items (products) are crea)
+  diagnose: class=action_not_executed (The 'Create Listing' button action was not executed or failed to navig)
+  verify: matched=False type=transient_failure class=action_not_executed
+  recover: click store-b-create-listing (Click the 'Create Listing' button to open the product creati)
+  cache hit: provide basic product information → Leather Bag > 89
+  cache hit: attach the product image → Field Image
+  cache hit: make the product publicly available → Go Live
+-- adapter after:  v5 [['store-b-nav-catalog', 'store-b-create-listing'], ['store-b-field-name', 'store-b-field-price'], ['store-b-field-image'], ['store-b-field-shipping'], ['store-b-field-tax-class'], ['store-b-go-live']]
+
+################ all flags back to false ################
+{"rename_publish":false,"extra_required":false,"reorder_nav":false}

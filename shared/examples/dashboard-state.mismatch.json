@@ -20,15 +20,15 @@
     "mappings": [
       {
         "label": "Create item",
-        "app_action": "Collections > Create",
+        "app_action": "Inventory > Create Listing",
         "semantic_intent": "start creating a new sellable item",
-        "highlight": "error"
+        "highlight": null
       },
       {
         "label": "Publish",
         "app_action": "Go Live",
         "semantic_intent": "make the product publicly available",
-        "highlight": null
+        "highlight": "error"
       }
     ]
   },
@@ -36,6 +36,16 @@
     "skill_loaded": true,
     "adapter_learned": false,
     "product_live": false,
-    "message": "ADAPTER MISMATCH DETECTED — Collections is not product creation. Alternative: Inventory"
-  }
+    "message": "missing_prerequisite — Go Live blocked. Evidence: shipping category required."
+  },
+  "loop_trace": [
+    {
+      "semantic_step": "make the product publicly available",
+      "control": "click store-b-go-live",
+      "verification": "failed",
+      "failure_class": "missing_prerequisite",
+      "patch": null,
+      "mapping_count": 3
+    }
+  ]
 }

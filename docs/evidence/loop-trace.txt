@@ -1,0 +1,43 @@
+# captured 2026-09-19T17:01:30Z
+# GET /api/live-dashboard — what the dashboard renders, straight from the run above.
+# Every 'failed' row is followed by the row that resolved it.
+
+adapter mappings: 5
+
+verify  failure_class          step                                   control / patch
+------------------------------------------------------------------------------------------------------------------------
+failed  action_not_executed    start creating a new sellable item     click store-b-nav-inventory
+passed  none                   start creating a new sellable item     recovered click store-b-create-listing  [patch=add_navigation_rule]
+passed  none                   provide basic product information      fill store-b-field-name
+passed  none                   attach the product image               upload store-b-field-image
+failed  missing_prerequisite   make the product publicly available    click store-b-go-live
+passed  none                   make the product publicly available    select store-b-field-shipping  [patch=add_prerequisite]
+passed  none                   make the product publicly available    recovered store-b-go-live
+passed  none                   start creating a new sellable item     cache Inventory > Create Listing
+passed  none                   provide basic product information      cache Leather Bag > 89
+passed  none                   attach the product image               cache Field Image
+passed  none                   make the product publicly available    cache Go Live
+
+metrics: {
+  "first": {
+    "product": "Leather Bag",
+    "actions": 7,
+    "model_calls": 13,
+    "recoveries": 2,
+    "cache_hits": 0,
+    "latency_ms": 71605
+  },
+  "second": {
+    "product": "Blue Sneaker",
+    "actions": 7,
+    "model_calls": 3,
+    "recoveries": 0,
+    "cache_hits": 4,
+    "latency_ms": 9224
+  },
+  "reuse_gain": {
+    "actions": 0,
+    "model_calls": 10,
+    "recoveries": 2
+  }
+}

@@ -108,14 +108,15 @@ def _explore_llm(
         json.dumps(payload, indent=2),
         *screenshot_parts(screenshot_bytes),
     ]
+    from .gateway import materialize_model
+    from .grounding import run_agent_sync
+
     agent = Agent(
-        model,
+        materialize_model(model),
         name="skill_explorer",
         output_type=ExploreResult,
         instructions=_EXPLORER_INSTRUCTIONS,
     )
-    from .grounding import run_agent_sync
-
     return run_agent_sync(agent, user_parts)
 
 

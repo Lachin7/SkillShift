@@ -35,8 +35,8 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 _API_KEY_MODELS: tuple[tuple[str, str], ...] = (
     ("OPENAI_API_KEY", "openai:gpt-4o"),
     ("ANTHROPIC_API_KEY", "anthropic:claude-sonnet-4-5"),
-    ("GOOGLE_API_KEY", "google-gla:gemini-2.0-flash"),
-    ("GEMINI_API_KEY", "google-gla:gemini-2.0-flash"),
+    ("GOOGLE_API_KEY", "google:gemini-3.6-flash"),
+    ("GEMINI_API_KEY", "google:gemini-3.6-flash"),
     ("GROQ_API_KEY", "groq:meta-llama/llama-4-scout-17b-16e-instruct"),
 )
 
@@ -195,14 +195,16 @@ def _learn_with_pydantic_ai(events: list[TraceEvent], model: str) -> Skill:
             attached.add(media)
             user_parts.append(BinaryContent.from_path(media))
 
+    from .gateway import materialize_model
+    from .grounding import run_agent_sync
+
     agent = Agent(
-        model,
+        materialize_model(model),
         name="skill_learner",
         output_type=Skill,
         instructions=_LEARNER_INSTRUCTIONS,
     )
-    result = agent.run_sync(user_parts)
-    return result.output
+    return run_agent_sync(agent, user_parts)
 
 
 def learn_skill(events: list[TraceEvent]) -> Skill:

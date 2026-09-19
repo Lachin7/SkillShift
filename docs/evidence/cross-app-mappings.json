@@ -1,0 +1,82 @@
+[
+  {
+    "app_id": "store-b",
+    "adapter_version": 2,
+    "mapping_count": 5,
+    "start": [
+      "store-b-nav-inventory",
+      "store-b-create-listing"
+    ],
+    "publish": [
+      "store-b-go-live"
+    ],
+    "prerequisites": [
+      {
+        "intent": "satisfy environment prerequisite: shipping category",
+        "targets": [
+          "store-b-field-shipping"
+        ]
+      }
+    ]
+  },
+  {
+    "app_id": "store-c",
+    "adapter_version": 2,
+    "mapping_count": 5,
+    "start": [
+      "store-c-new-row"
+    ],
+    "publish": [
+      "store-c-field-status",
+      "store-c-save-row"
+    ],
+    "prerequisites": [
+      {
+        "intent": "satisfy environment prerequisite: category",
+        "targets": [
+          "store-c-field-category"
+        ]
+      }
+    ]
+  },
+  {
+    "app_id": "store-d",
+    "adapter_version": 2,
+    "mapping_count": 5,
+    "start": [
+      "store-d-nav-inventory",
+      "store-d-create-listing"
+    ],
+    "publish": [
+      "store-d-publish"
+    ],
+    "prerequisites": [
+      {
+        "intent": "satisfy environment prerequisite: shipping category",
+        "targets": [
+          "store-d-field-shipping"
+        ]
+      }
+    ]
+  },
+  {
+    "app_id": "store-e",
+    "adapter_version": 2,
+    "mapping_count": 5,
+    "start": [
+      "store-e-nav-inventory",
+      "store-e-create-listing"
+    ],
+    "publish": [
+      "store-e-release"
+    ],
+    "prerequisites": [
+      {
+        "intent": "satisfy environment prerequisite: shipping category",
+        "targets": [
+          "store-e-field-shipping"
+        ]
+      }
+    ]
+  }
+]

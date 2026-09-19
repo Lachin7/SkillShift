@@ -66,6 +66,9 @@ class ObservationControl(BaseModel):
     name: str
     enabled: bool = True
     region: str = ""
+    # Current value for inputs/selects. Lets the verifier see an empty required
+    # field instead of assuming a fill succeeded. "" means empty or not an input.
+    value: str = ""
 
 
 class AppObservation(BaseModel):

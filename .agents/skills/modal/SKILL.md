@@ -8,6 +8,8 @@ description: >
   (e.g. batch jobs), needs access to GPUs (e.g. AI workloads including training
   and inference) or needs to run untrusted processes in a sandbox, since Modal
   serves these use cases well.
+metadata:
+  version: "1.5.5"
 ---
 
 # Overview

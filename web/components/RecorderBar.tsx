@@ -21,24 +21,28 @@ export function RecorderBar({
 }: Props) {
   return (
     <div className="recorder" data-html2canvas-ignore>
-      <button
-        type="button"
-        className={`recorder-toggle${recording ? " on" : ""}`}
-        onClick={onToggle}
-      >
-        <span className="recorder-dot" />
-        {recording ? "Rec" : "Start"}
-      </button>
-      <span className="recorder-count">
-        {count} {count === 1 ? "event" : "events"}
-        {busy ? " · capturing" : ""}
-      </span>
-      <button type="button" onClick={onDownload} disabled={count === 0}>
-        Download trace
-      </button>
-      <button type="button" onClick={onSave} disabled={count === 0 || busy}>
-        Save trace
-      </button>
+      <div className="recorder-brand">SkillShift · teaching</div>
+      <div className="recorder-row">
+        <button
+          type="button"
+          className={`recorder-toggle${recording ? " on" : ""}`}
+          onClick={onToggle}
+          aria-pressed={recording}
+        >
+          <span className="recorder-dot" />
+          {recording ? "Rec" : "Start"}
+        </button>
+        <span className="recorder-count">
+          {count} {count === 1 ? "event" : "events"}
+          {busy ? " · capturing" : ""}
+        </span>
+        <button type="button" onClick={onDownload} disabled={count === 0}>
+          Download
+        </button>
+        <button type="button" onClick={onSave} disabled={count === 0 || busy}>
+          Save
+        </button>
+      </div>
       {status ? <span className="recorder-status">{status}</span> : null}
     </div>
   );

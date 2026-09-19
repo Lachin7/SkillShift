@@ -1,0 +1,26 @@
+# captured 2026-09-19T16:48:16Z — versions
+python 3.12.13
+pydantic-ai 2.46.0
+pydantic 2.13.5
+playwright 1.63.0
+modal 1.5.5
+model: google:gemini-3.6-flash (resolved from GEMINI_API_KEY in .env)
+node v26.8.2
+Next.js v15.5.25
+
+# web build
+ ✓ Compiled successfully in 733ms
+Route (app)                                 Size  First Load JS
+├ ƒ /api/live-dashboard                    141 B         103 kB
+├ ƒ /api/live-products                     141 B         103 kB
+├ ƒ /api/perturbations                     141 B         103 kB
+├ ƒ /api/run-transfer                      141 B         103 kB
+├ ƒ /api/store-b-state                     141 B         103 kB
+├ ƒ /api/teach-trace                       141 B         103 kB
+├ ƒ /api/trace                             141 B         103 kB
+├ ○ /store-a                             3.42 kB         109 kB
+├ ○ /store-b                             3.37 kB         109 kB
+├ ○ /store-c                             2.34 kB         108 kB
+├ ○ /store-d                             2.03 kB         108 kB
+└ ○ /store-e                             2.02 kB         108 kB
++ First Load JS shared by all             103 kB

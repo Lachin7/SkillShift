@@ -22,8 +22,8 @@ from playwright.sync_api import expect, sync_playwright
 from .adapter import STORE_A_TESTIDS, intent_to_testids
 from .models import CandidateAction, EnvironmentAdapter, Skill
 
-DEFAULT_DEMO_PAUSE = 1.2
-DEFAULT_DEMO_HOLD = 3.0
+DEFAULT_DEMO_PAUSE = 0.25
+DEFAULT_DEMO_HOLD = 1.2
 HEADED_SLOW_MO_MS = 400
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -188,7 +188,7 @@ def execute_candidate(
     testid = action.target_testid
     if action.action == "click":
         locator = hands.page.get_by_test_id(testid)
-        if testid.endswith(("go-live", "publish", "launch-product", "save-row")):
+        if testid.endswith(("go-live", "publish", "launch-product", "save-row", "release")):
             try:
                 expect(locator).to_be_enabled(timeout=5000)
             except (PlaywrightTimeout, AssertionError):
@@ -287,7 +287,7 @@ def execute_resolved_targets(
             hands.select(testid, "Public")
         elif testid.endswith("-product-card"):
             continue
-        elif testid.endswith(("-go-live", "-launch-product", "-publish", "-save-row")):
+        elif testid.endswith(("-go-live", "-launch-product", "-publish", "-save-row", "-release")):
             locator = hands.page.get_by_test_id(testid)
             try:
                 expect(locator).to_be_enabled(timeout=2000)

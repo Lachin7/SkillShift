@@ -58,12 +58,21 @@ def is_finish_control(ref: str) -> bool:
     return any(ref.endswith(suffix) for suffix in FINISH_SUFFIXES)
 
 
+def gateway_requested() -> bool:
+    """Gateway must be asked for while a working direct key exists.
+
+    A merely present PYDANTIC_AI_GATEWAY_API_KEY used to outrank GEMINI_API_KEY, so a
+    gateway not enabled for the org (403) took the whole demo down.
+    """
+    return os.environ.get("SKILLSHIFT_USE_GATEWAY", "").lower() in {"1", "true", "yes"}
+
+
 def configured_model() -> str | None:
     """Resolve model for Explorer / Verifier / Recovery.
 
     Priority:
     1. SKILLSHIFT_MODEL (explicit override, may be gateway/…)
-    2. PYDANTIC_AI_GATEWAY_API_KEY → gateway/… (prize path; Logfire optimizations apply)
+    2. Gateway, when SKILLSHIFT_USE_GATEWAY=1 or no direct provider key exists
     3. Direct provider keys (OpenAI / Anthropic / Gemini / Groq)
     """
     override = os.environ.get("SKILLSHIFT_MODEL")
@@ -71,12 +80,13 @@ def configured_model() -> str | None:
         return override
     from .gateway import gateway_enabled, gateway_model
 
-    if gateway_enabled():
+    direct = next(
+        (model for env_name, model in _API_KEY_MODELS if os.environ.get(env_name)),
+        None,
+    )
+    if gateway_enabled() and (gateway_requested() or direct is None):
         return gateway_model()
-    for env_name, model in _API_KEY_MODELS:
-        if os.environ.get(env_name):
-            return model
-    return None
+    return direct
 
 
 def use_mock_llm() -> bool:
@@ -116,6 +126,7 @@ def elements_from_observation(observation: AppObservation) -> list[dict[str, str
                 "role": control.role,
                 "name": control.name,
                 "text": control.name,
+                "value": control.value,
             }
         )
     return rows
@@ -137,7 +148,11 @@ def summarize_elements(elements: list[dict[str, str]]) -> str:
             continue
         name = (item.get("name") or item.get("text") or "").strip().replace("\n", " ")
         role = item.get("role") or ""
-        rows.append({"testid": testid, "role": role, "name": name[:120]})
+        row = {"testid": testid, "role": role, "name": name[:120]}
+        value = (item.get("value") or "").strip()
+        if value:
+            row["value"] = value[:120]
+        rows.append(row)
     return json.dumps(rows, indent=2)
 
 

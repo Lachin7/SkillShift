@@ -44,6 +44,7 @@ def observe_app(hands) -> AppObservation:
                 role=role,
                 name=name,
                 enabled=_control_enabled(hands, ref),
+                value=_control_value(hands, ref),
             )
         )
 
@@ -61,6 +62,24 @@ def observe_app(hands) -> AppObservation:
         messages=messages,
         state=state,
     )
+
+
+def _control_value(hands, ref: str) -> str:
+    """What the field currently holds. Empty string for non-inputs."""
+    try:
+        locator = hands.page.get_by_test_id(ref)
+        if locator.count() == 0:
+            return ""
+        node = locator.first
+        tag = str(node.evaluate("el => el.tagName") or "").lower()
+        if tag not in {"input", "select", "textarea"}:
+            return ""
+        if str(node.get_attribute("type") or "").lower() == "file":
+            chosen = bool(node.evaluate("el => (el.files || []).length > 0"))
+            return "file selected" if chosen else ""
+        return (node.input_value() or "").strip()[:120]
+    except Exception:
+        return ""
 
 
 def _control_enabled(hands, ref: str) -> bool:

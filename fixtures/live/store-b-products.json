@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Leather Bag",
+    "price": "\u00a389",
+    "image": "/products/leather-bag.svg"
+  },
+  {
+    "name": "Blue Sneaker",
+    "price": "\u00a3120",
+    "image": "/products/blue-sneaker.svg"
+  }
+]

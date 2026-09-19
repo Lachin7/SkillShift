@@ -19,11 +19,21 @@ const POLL_MS = 800;
 
 type Mode = "live" | "preview";
 
+type TeachEvent = {
+  action: string;
+  target: string;
+  value: string | null;
+};
+
 export default function DashboardPage() {
   const [mode, setMode] = useState<Mode>("live");
   const [previewPhase, setPreviewPhase] = useState<DashboardPhase>("mismatch");
   const [live, setLive] = useState<DashboardState | null>(null);
   const [liveAvailable, setLiveAvailable] = useState(false);
+  const [running, setRunning] = useState(false);
+  const [runLog, setRunLog] = useState("");
+  const [runError, setRunError] = useState("");
+  const [trace, setTrace] = useState<TeachEvent[] | null>(null);
 
   const poll = useCallback(async () => {
     try {
@@ -41,13 +51,47 @@ export default function DashboardPage() {
     setLive(null);
   }, []);
 
+  const loadTrace = useCallback(async () => {
+    try {
+      const response = await fetch("/api/teach-trace", { cache: "no-store" });
+      const data = (await response.json()) as { events: TeachEvent[] | null };
+      setTrace(data.events);
+    } catch {
+      setTrace(null);
+    }
+  }, []);
+
   useEffect(() => {
     void poll();
+    void loadTrace();
     const timer = window.setInterval(() => {
       void poll();
     }, POLL_MS);
     return () => window.clearInterval(timer);
-  }, [poll]);
+  }, [loadTrace, poll]);
+
+  async function runTransfer() {
+    setRunning(true);
+    setRunError("");
+    setRunLog("");
+    try {
+      const response = await fetch("/api/run-transfer", { method: "POST" });
+      const data = (await response.json()) as {
+        ok?: boolean;
+        log?: string;
+        error?: string;
+      };
+      setRunLog(data.log || "");
+      if (!response.ok || data.ok === false) {
+        setRunError(data.error || "Transfer failed.");
+      }
+      void poll();
+    } catch (error) {
+      setRunError(error instanceof Error ? error.message : "Transfer failed.");
+    } finally {
+      setRunning(false);
+    }
+  }
 
   const showingLive = mode === "live" && live !== null;
   const raw = showingLive ? live : FIXTURES[previewPhase];
@@ -70,24 +114,34 @@ export default function DashboardPage() {
           <div className="live-ctrl">
             <button
               type="button"
+              className="run-transfer-btn"
+              disabled={running}
+              onClick={() => void runTransfer()}
+            >
+              {running ? "Running…" : "Run transfer"}
+            </button>
+            <button
+              type="button"
               className={`live-btn ${mode === "live" ? "on" : ""} ${liveAvailable ? "hot" : ""}`}
               onClick={() => setMode("live")}
             >
               <span className={`live-dot ${liveAvailable ? "pulse" : ""}`} />
               Live
             </button>
-            <button type="button" className="refresh-btn" onClick={() => void poll()}>
-              Refresh
-            </button>
             <span className="live-hint">
-              {liveAvailable
-                ? "fixtures/live/dashboard-state.json"
-                : "waiting for 3A — using fixture preview"}
+              {running
+                ? "headed Store B — one window"
+                : liveAvailable
+                  ? "live"
+                  : "waiting for a run"}
             </span>
           </div>
-          <div className="preview-block">
-            <span className="preview-label">fixture preview</span>
-            <div className="phase-ctrl" aria-label="Fixture preview">
+          {runError ? <p className="run-error">{runError}</p> : null}
+          {runLog ? <pre className="run-log">{runLog.trim().split("\n").slice(-8).join("\n")}</pre> : null}
+          <details className="dash-dev">
+            <summary>Replay slides</summary>
+            <p className="preview-label">Dev fallback if a live run is not available.</p>
+            <div className="phase-ctrl" aria-label="Replay slides">
               {PHASES.map((item) => (
                 <button
                   key={item}
@@ -102,7 +156,10 @@ export default function DashboardPage() {
                 </button>
               ))}
             </div>
-          </div>
+            <button type="button" className="refresh-btn" onClick={() => void poll()}>
+              Refresh live
+            </button>
+          </details>
         </div>
       </div>
 
@@ -130,6 +187,9 @@ export default function DashboardPage() {
           ) : (
             <span className="badge recognised">Recognised environment</span>
           )}
+          {state.app.app_id === "store-a" ? (
+            <p className="frozen-note">Environment Store A / Adapter cached</p>
+          ) : null}
         </article>
 
         <article className="card adapter-card">
@@ -170,7 +230,60 @@ export default function DashboardPage() {
           >
             {state.status.message}
           </div>
+          {typeof (state.status as unknown as { modal?: string }).modal === "string" ? (
+            <p className="frozen-note">{(state.status as unknown as { modal: string }).modal}</p>
+          ) : null}
+          {state.metrics?.reuse_gain ? (
+            <p className="frozen-note">
+              reuse {state.metrics.first?.actions ?? "—"}→{state.metrics.second?.actions ?? "—"} actions
+              {" · "}
+              {state.metrics.first?.model_calls ?? "—"}→{state.metrics.second?.model_calls ?? "—"} models
+              {" · "}
+              recoveries {state.metrics.second?.recoveries ?? state.status.recoveries ?? 0}
+            </p>
+          ) : null}
         </article>
+      </section>
+
+      {state.loop_trace && state.loop_trace.length > 0 ? (
+        <section className="loop-trace">
+          <h2>Transfer loop</h2>
+          <ol>
+            {state.loop_trace.map((item, index) => (
+              <li key={`${item.semantic_step}-${index}`} data-verification={item.verification}>
+                <span className="loop-step">{item.semantic_step}</span>
+                {item.control ? <span className="loop-control">→ {item.control}</span> : null}
+                <span className={`loop-verify ${item.verification === "passed" ? "ok" : "bad"}`}>
+                  {item.verification}
+                  {item.failure_class && item.failure_class !== "none"
+                    ? ` · ${item.failure_class}`
+                    : ""}
+                </span>
+                {item.patch ? <span className="loop-patch">patch {item.patch}</span> : null}
+                {typeof item.mapping_count === "number" ? (
+                  <span className="loop-maps">maps {item.mapping_count}</span>
+                ) : null}
+              </li>
+            ))}
+          </ol>
+        </section>
+      ) : null}
+
+      <section className="teach-trace">
+        <h2>Store A demonstration</h2>
+        {trace && trace.length > 0 ? (
+          <ol>
+            {trace.map((event, index) => (
+              <li key={`${event.action}-${event.target}-${index}`}>
+                <span className="teach-action">{event.action}</span>
+                <span className="teach-target">{event.target}</span>
+                {event.value ? <span className="teach-value">{event.value}</span> : null}
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p>No demonstration saved — teach in Store A.</p>
+        )}
       </section>
     </main>
   );

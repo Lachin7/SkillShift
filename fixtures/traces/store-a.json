@@ -40,5 +40,61 @@
     "target": "Continue to Publish",
     "value": null,
     "after": "fixtures/traces/frames/frame_07.png"
+  },
+  {
+    "before": "fixtures/traces/frames/frame_07.png",
+    "action": "click",
+    "target": "Publish",
+    "value": null,
+    "after": "fixtures/traces/frames/frame_08.png"
+  },
+  {
+    "before": "fixtures/traces/frames/frame_08.png",
+    "action": "click",
+    "target": "Add Product",
+    "value": null,
+    "after": "fixtures/traces/frames/frame_09.png"
+  },
+  {
+    "before": "fixtures/traces/frames/frame_09.png",
+    "action": "fill",
+    "target": "Product name",
+    "value": "Blue Sneaker",
+    "after": "fixtures/traces/frames/frame_10.png"
+  },
+  {
+    "before": "fixtures/traces/frames/frame_10.png",
+    "action": "fill",
+    "target": "Price",
+    "value": "120",
+    "after": "fixtures/traces/frames/frame_11.png"
+  },
+  {
+    "before": "fixtures/traces/frames/frame_11.png",
+    "action": "upload",
+    "target": "Product image",
+    "value": "/products/blue-sneaker.svg",
+    "after": "fixtures/traces/frames/frame_12.png"
+  },
+  {
+    "before": "fixtures/traces/frames/frame_12.png",
+    "action": "click",
+    "target": "Continue to Media",
+    "value": null,
+    "after": "fixtures/traces/frames/frame_13.png"
+  },
+  {
+    "before": "fixtures/traces/frames/frame_13.png",
+    "action": "click",
+    "target": "Continue to Publish",
+    "value": null,
+    "after": "fixtures/traces/frames/frame_14.png"
+  },
+  {
+    "before": "fixtures/traces/frames/frame_14.png",
+    "action": "click",
+    "target": "Publish",
+    "value": null,
+    "after": "fixtures/traces/frames/frame_15.png"
   }
 ]

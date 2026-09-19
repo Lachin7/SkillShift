@@ -38,6 +38,11 @@ export default function HomePage() {
             <strong>Store D</strong>
             <p>みなと商店 — same IA as B, Japanese labels</p>
           </Link>
+          <Link className="home-card" href="/store-e">
+            <em>Localized</em>
+            <strong>Store E</strong>
+            <p>فروشگاه بندر — same IA as B, Farsi RTL</p>
+          </Link>
           <Link className="home-card" href="/dashboard">
             <em>Watch</em>
             <strong>Dashboard</strong>

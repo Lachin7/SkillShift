@@ -1,0 +1,73 @@
+{
+  "app_id": "store-b",
+  "skill_name": "publish_product",
+  "mappings": [
+    {
+      "semantic_intent": "start creating a new sellable item",
+      "app_action": "Inventory > Create Listing",
+      "confidence": 0.75,
+      "learned_from": "recovery",
+      "resolved_targets": [
+        "store-b-nav-inventory",
+        "store-b-create-listing"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "provide basic product information",
+      "app_action": "Leather Bag > 89",
+      "confidence": 0.9,
+      "learned_from": "exploration",
+      "resolved_targets": [
+        "store-b-field-name",
+        "store-b-field-price"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "attach the product image",
+      "app_action": "Field Image",
+      "confidence": 0.9,
+      "learned_from": "exploration",
+      "resolved_targets": [
+        "store-b-field-image"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "satisfy environment prerequisite: shipping category",
+      "app_action": "Select category",
+      "confidence": 0.9,
+      "learned_from": "recovery",
+      "resolved_targets": [
+        "store-b-field-shipping"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    },
+    {
+      "semantic_intent": "make the product publicly available",
+      "app_action": "Go Live",
+      "confidence": 0.9,
+      "learned_from": "recovery",
+      "resolved_targets": [
+        "store-b-go-live"
+      ],
+      "status": "reusable",
+      "successes": 2,
+      "failures": 0
+    }
+  ],
+  "failure_lessons": [
+    "create control visible; form not open",
+    "This environment requires an extra prerequisite before publish."
+  ],
+  "adapter_version": 2
+}

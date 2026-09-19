@@ -1,0 +1,23 @@
+{
+  "first": {
+    "product": "Leather Bag",
+    "actions": 7,
+    "model_calls": 13,
+    "recoveries": 2,
+    "cache_hits": 0,
+    "latency_ms": 71239
+  },
+  "second": {
+    "product": "Blue Sneaker",
+    "actions": 7,
+    "model_calls": 3,
+    "recoveries": 0,
+    "cache_hits": 4,
+    "latency_ms": 18530
+  },
+  "reuse_gain": {
+    "actions": 0,
+    "model_calls": 10,
+    "recoveries": 2
+  }
+}

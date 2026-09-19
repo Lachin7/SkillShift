@@ -73,8 +73,10 @@ def _diagnose_llm(
             "controls": [c.model_dump() for c in observation.controls],
         },
     }
+    from .gateway import materialize_model
+
     agent = Agent(
-        model,
+        materialize_model(model),
         name="skill_diagnoser",
         output_type=Diagnosis,
         instructions=_DIAGNOSER_INSTRUCTIONS,
@@ -135,7 +137,7 @@ def _diagnose_mock(
     )
     finish_disabled = any(
         (not control.enabled)
-        and any(token in control.ref.lower() for token in ("go-live", "publish", "activate"))
+        and any(token in control.ref.lower() for token in ("go-live", "publish", "activate", "release"))
         for control in observation.controls
     )
     category_gate = any(

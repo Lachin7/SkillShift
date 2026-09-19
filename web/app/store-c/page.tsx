@@ -211,7 +211,7 @@ export default function StoreCPage() {
           <button type="button" data-testid="store-c-drawer-close" onClick={() => setDrawerOpen(false)}>
             Close
           </button>
-          <h2>Edit row</h2>
+          <h2>{editingSeed ? "Edit row" : "New row"}</h2>
           <CatalogPicker
             tone="b"
             selected={{ name: title, image: photo }}

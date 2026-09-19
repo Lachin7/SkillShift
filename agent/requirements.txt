@@ -3,3 +3,5 @@ pydantic-ai>=0.8
 pytest>=8.0
 # After install: playwright install chromium
 playwright>=1.40
+# Optional Wave 6 parallel scoring. Transfer falls back locally without auth.
+modal>=1.0

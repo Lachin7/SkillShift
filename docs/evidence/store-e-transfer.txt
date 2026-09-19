@@ -1,0 +1,47 @@
+# captured 2026-09-19 — SKILLSHIFT_TARGET_APP=store-e python -m agent.run_transfer --reset
+# Persian, RTL. Finish control is store-e-release (انتشار), not a go-live suffix.
+
+Skill loaded: publish_product
+Environment: store-e unseen
+Adapter: empty — grounding via Explorer / Verifier / Recovery
+First run — discover HOW HERE
+STEP: start creating a new sellable item
+  explore[1]: click store-e-nav-inventory (To start creating a sellable item, navigate to inventory whe)
+  diagnose: class=action_not_executed (The action to click the 'ایجاد آگهی' button was not executed, leaving )
+  verify: matched=False type=transient_failure class=action_not_executed
+  recover: click store-e-create-listing (Clicking 'ایجاد آگهی' (store-e-create-listing) to open the i)
+STEP: provide basic product information
+  explore[1]: fill store-e-field-name (Fill product name with 'Leather Bag' as part of providing ba)
+  verify: matched=True type=none class=none
+STEP: attach the product image
+  explore[1]: upload store-e-field-image (The intent is to attach/upload the product image, which corr)
+  verify: matched=True type=none class=none
+STEP: make the product publicly available
+  explore[1]: click store-e-release (Clicking 'انتشار' (Publish) publishes the product and makes )
+  diagnose: class=missing_prerequisite (The shipping category was not selected, causing a prerequisite blocker)
+  verify: matched=False type=missing_prerequisite class=missing_prerequisite
+  WORKFLOW MISMATCH — missing prerequisite
+  Hypothesis: The shipping category was not selected, causing a prerequisite blocker message to appear and keeping the publish button disabled.
+  hypothesis score (modal): winner=A
+  recover prereq: select store-e-field-shipping
+  retry step: click store-e-release
+  patch applied: add_prerequisite satisfy environment prerequisite: shipping category
+Product live (Leather Bag)
+Leather Bag |  | £89
+Second run — cached adapter
+STEP: start creating a new sellable item
+  cache hit: start creating a new sellable item → موجودی > Store E Create Listing
+STEP: provide basic product information
+  cache hit: provide basic product information → Store E Field Name > Store E Field Price
+STEP: attach the product image
+  cache hit: attach the product image → Store E Field Image
+STEP: make the product publicly available
+  cache hit: make the product publicly available → Store E Release
+reuse_gain:
+  actions: 7 - 7 = 0
+  model_calls: 13 - 3 = 10
+  recoveries: 2 - 0 = 2
+Blue Sneaker live
+Blue Sneaker |  | £120
+
+# Frozen adapter after this run: adapters/store_e.learned.json

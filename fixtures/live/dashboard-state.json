@@ -25,17 +25,163 @@
         "highlight": null
       },
       {
+        "label": "provide basic product information",
+        "app_action": "Leather Bag > 89",
+        "semantic_intent": "provide basic product information",
+        "highlight": null
+      },
+      {
+        "label": "attach the product image",
+        "app_action": "Field Image",
+        "semantic_intent": "attach the product image",
+        "highlight": null
+      },
+      {
+        "label": "Shipping",
+        "app_action": "Select category",
+        "semantic_intent": "satisfy environment prerequisite: shipping category",
+        "highlight": null
+      },
+      {
         "label": "Publish",
         "app_action": "Go Live",
         "semantic_intent": "make the product publicly available",
         "highlight": null
       }
+    ],
+    "failure_lessons": [
+      "The click action on the 'Create Listing' button was either not performed or failed to register, leaving the interface on the main Inventory page.",
+      "The required shipping category field was left unselected, preventing the Go Live button from becoming enabled to complete publication."
     ]
   },
   "status": {
     "skill_loaded": true,
     "adapter_learned": true,
     "product_live": true,
-    "message": "Adapter found. Exploration skipped. Product live."
+    "message": "Previously learned mappings reused. Exploration skipped where cached."
+  },
+  "loop_trace": [
+    {
+      "semantic_step": "start creating a new sellable item",
+      "control": "click store-b-nav-inventory",
+      "verification": "failed",
+      "failure_class": "action_not_executed",
+      "patch": null,
+      "adapter_version": 0,
+      "mapping_count": 0
+    },
+    {
+      "semantic_step": "start creating a new sellable item",
+      "control": "recovered click store-b-create-listing",
+      "verification": "passed",
+      "failure_class": "none",
+      "patch": "add_navigation_rule",
+      "adapter_version": 1,
+      "mapping_count": 1
+    },
+    {
+      "semantic_step": "provide basic product information",
+      "control": "fill store-b-field-name",
+      "verification": "passed",
+      "failure_class": "none",
+      "patch": null,
+      "adapter_version": 1,
+      "mapping_count": 1
+    },
+    {
+      "semantic_step": "attach the product image",
+      "control": "upload store-b-field-image",
+      "verification": "passed",
+      "failure_class": "none",
+      "patch": null,
+      "adapter_version": 2,
+      "mapping_count": 2
+    },
+    {
+      "semantic_step": "make the product publicly available",
+      "control": "click store-b-go-live",
+      "verification": "failed",
+      "failure_class": "missing_prerequisite",
+      "patch": null,
+      "adapter_version": 3,
+      "mapping_count": 3
+    },
+    {
+      "semantic_step": "make the product publicly available",
+      "control": "select store-b-field-shipping",
+      "verification": "passed",
+      "failure_class": "none",
+      "patch": "add_prerequisite",
+      "adapter_version": 4,
+      "mapping_count": 4
+    },
+    {
+      "semantic_step": "make the product publicly available",
+      "control": "recovered store-b-go-live",
+      "verification": "passed",
+      "failure_class": "none",
+      "patch": null,
+      "adapter_version": 5,
+      "mapping_count": 5
+    },
+    {
+      "semantic_step": "start creating a new sellable item",
+      "control": "cache Inventory > Create Listing",
+      "verification": "passed",
+      "failure_class": "none",
+      "patch": null,
+      "adapter_version": 5,
+      "mapping_count": 5
+    },
+    {
+      "semantic_step": "provide basic product information",
+      "control": "cache Leather Bag > 89",
+      "verification": "passed",
+      "failure_class": "none",
+      "patch": null,
+      "adapter_version": 5,
+      "mapping_count": 5
+    },
+    {
+      "semantic_step": "attach the product image",
+      "control": "cache Field Image",
+      "verification": "passed",
+      "failure_class": "none",
+      "patch": null,
+      "adapter_version": 5,
+      "mapping_count": 5
+    },
+    {
+      "semantic_step": "make the product publicly available",
+      "control": "cache Go Live",
+      "verification": "passed",
+      "failure_class": "none",
+      "patch": null,
+      "adapter_version": 5,
+      "mapping_count": 5
+    }
+  ],
+  "metrics": {
+    "first": {
+      "product": "Leather Bag",
+      "actions": 7,
+      "model_calls": 13,
+      "recoveries": 2,
+      "cache_hits": 0,
+      "latency_ms": 71239
+    },
+    "second": {
+      "product": "Blue Sneaker",
+      "actions": 7,
+      "model_calls": 3,
+      "recoveries": 0,
+      "cache_hits": 4,
+      "latency_ms": 18530
+    },
+    "reuse_gain": {
+      "actions": 0,
+      "model_calls": 10,
+      "recoveries": 2
+    }
   }
 }

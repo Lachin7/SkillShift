@@ -21,6 +21,7 @@ const APP_FILES: Record<string, string> = {
   "store-b": "store-b-products.json",
   "store-c": "store-c-products.json",
   "store-d": "store-d-products.json",
+  "store-e": "store-e-products.json",
 };
 
 async function readProducts(app: string): Promise<Product[]> {

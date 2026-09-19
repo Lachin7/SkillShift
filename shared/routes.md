@@ -10,6 +10,7 @@ Do not invent extra seller features, auth, or a database.
 | `/store-b` | `store-b` | Single-page form | `Inventory → Create Listing` | Go Live | Product card |
 | `/store-c` | `store-c` | Table + drawer | `Listings → Add row` | Status Live + Save row | Product card |
 | `/store-d` | `store-d` | Store B twin, Japanese labels | `在庫 → 出品を作成` | 公開する | Product card |
+| `/store-e` | `store-e` | Store B twin, Farsi RTL | `موجودی → ایجاد آگهی` | انتشار | Product card |
 | `/dashboard` | — | Four cards | — | — | Skill / App / Adapter / Status |
 
 Store B nav **must** include a plausible decoy:
@@ -108,6 +109,30 @@ Northwind Market. Prerequisite is **category**, not shipping. Finish is two acti
 - `store-d-create-listing`
 - `store-d-field-price`, `store-d-field-name`, `store-d-field-shipping`, `store-d-field-image`, `store-d-field-listing-type`
 - `store-d-shipping-blocker`, `store-d-publish`, `store-d-product-card`
+
+### Store E
+
+فروشگاه بندر. Twin of Store B; every visible string is Farsi, `dir="rtl"`. `data-testid` values stay ASCII. Finish is `store-e-release`, not `*-go-live` or `*-publish`. Field order: name, shipping, price, image, listing type.
+
+| Element | Copy |
+| --- | --- |
+| Brand | فروشگاه بندر |
+| Nav | مجموعه‌ها / موجودی / سفارش‌ها |
+| Inventory heading | فهرست موجودی |
+| Create | ایجاد آگهی |
+| Form heading | ساخت آگهی |
+| Fields | نام کالا / دستهٔ ارسال / قیمت / تصویر کالا / وضعیت انتشار |
+| Shipping options | انتخاب کنید / عادی / سریع / باربری |
+| Listing type | عمومی / پیش‌نویس |
+| Finish | انتشار |
+| Cancel | انصراف |
+| Blocker | برای انتشار باید دستهٔ ارسال را انتخاب کنید. |
+| Empty inventory | هنوز آگهی‌ای نیست. |
+
+- `store-e-nav-collections`, `store-e-nav-inventory`, `store-e-nav-orders`
+- `store-e-create-listing`
+- `store-e-field-name`, `store-e-field-shipping`, `store-e-field-price`, `store-e-field-image`, `store-e-field-listing-type`
+- `store-e-shipping-blocker`, `store-e-release`, `store-e-product-card`
 
 ## Perturbations (Store B judge controls)
 

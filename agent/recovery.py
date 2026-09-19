@@ -38,6 +38,9 @@ visible_elements. Never invent testids.
 If mismatch_type is missing_prerequisite, prefer filling/selecting the
 blocking control (e.g. a required dropdown mentioned in observed_state).
 If wrong_navigation, pick a different nav/control not in failed_testids.
+Prefer a control that advances the task. Do not pick close / cancel / back controls
+that would undo progress already made, unless observed_state says the current panel
+is the wrong place entirely.
 Return one CandidateAction.
 """
 
@@ -85,14 +88,15 @@ def _recover_llm(
         json.dumps(payload, indent=2),
         *screenshot_parts(screenshot_bytes),
     ]
+    from .gateway import materialize_model
+    from .grounding import run_agent_sync
+
     agent = Agent(
-        model,
+        materialize_model(model),
         name="skill_recovery",
         output_type=CandidateAction,
         instructions=_RECOVERY_INSTRUCTIONS,
     )
-    from .grounding import run_agent_sync
-
     return run_agent_sync(agent, user_parts)
 
 

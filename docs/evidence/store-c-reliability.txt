@@ -1,0 +1,45 @@
+# captured 2026-09-19T16:52:56Z
+# Reliability check: 3 consecutive Store C cold starts, adapter emptied each time.
+
+----- attempt 1 -----
+PASS
+  explore[1]: click store-c-new-row (Clicking 'Add row' creates a new listing entry/row to start )
+  explore[1]: fill store-c-field-title (Fill the product name 'Leather Bag' into the Title input fie)
+  explore[1]: upload store-c-field-photo (Upload the specified image file to the photo input field.)
+  explore[1]: select store-c-field-status (To make the product publicly available, change the status dr)
+  diagnose: class=missing_prerequisite (The listing cannot be set to Live/published because selecting a catego)
+  verify: matched=False type=missing_prerequisite class=missing_prerequisite
+  WORKFLOW MISMATCH — missing prerequisite
+  Hypothesis: The listing cannot be set to Live/published because selecting a category is a required prerequisite.
+  recover prereq: select store-c-field-category
+  patch applied: add_prerequisite satisfy environment prerequisite: category
+reuse_gain:
+  actions: 7 - 7 = 0
+----- attempt 2 -----
+PASS
+  explore[1]: click store-c-new-row (Clicking 'Add row' starts creating a new item in the listing)
+  explore[1]: fill store-c-field-title (Fill the Title field with the product name 'Leather Bag'.)
+  explore[1]: upload store-c-field-photo (Upload the specified product image file to the photo input f)
+  explore[1]: select store-c-field-status (Selecting 'Live' from the status dropdown directly sets the )
+  diagnose: class=missing_prerequisite (The listing cannot be published because selecting a category is a requ)
+  verify: matched=False type=missing_prerequisite class=missing_prerequisite
+  WORKFLOW MISMATCH — missing prerequisite
+  Hypothesis: The listing cannot be published because selecting a category is a required prerequisite before setting the status to Live and saving.
+  recover prereq: select store-c-field-category
+  patch applied: add_prerequisite satisfy environment prerequisite: category
+reuse_gain:
+  actions: 7 - 7 = 0
+----- attempt 3 -----
+PASS
+  explore[1]: click store-c-new-row (Clicking 'Add row' creates a new item/listing row in the tab)
+  explore[1]: fill store-c-field-title (Fill Title field with product name "Leather Bag")
+  explore[1]: upload store-c-field-photo (Upload the product image file using the photo file input ele)
+  explore[1]: select store-c-field-status (Select 'Live' status in the status field to make the product)
+  diagnose: class=missing_prerequisite (The product cannot be published (set to Live) because the category pre)
+  verify: matched=False type=missing_prerequisite class=missing_prerequisite
+  WORKFLOW MISMATCH — missing prerequisite
+  Hypothesis: The product cannot be published (set to Live) because the category prerequisite has not been selected yet.
+  recover prereq: select store-c-field-category
+  patch applied: add_prerequisite satisfy environment prerequisite: category
+reuse_gain:
+  actions: 7 - 7 = 0

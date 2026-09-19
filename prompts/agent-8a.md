@@ -1,6 +1,6 @@
 # Agent 8A — Judge-controlled perturbation of Store B
 
-You are Agent 8A on SkillShift. Read [WAVE8.md](../WAVE8.md) first, then [shared/routes.md](../shared/routes.md) and [ARCHITECTURE.md](../ARCHITECTURE.md).
+You are Agent 8A on SkillShift. Read [WAVE8.md](../docs/build/WAVE8.md) first, then [shared/routes.md](../shared/routes.md) and [ARCHITECTURE.md](../ARCHITECTURE.md).
 
 ## Goal
 
@@ -93,7 +93,7 @@ Web: assert `store-b-go-live` absent and `store-b-launch-product` present when t
 ## Guardrails
 
 - Never edit the Skill or its four intents.
-- Never edit `web/app/dashboard/**` — Agent 7F owns it. If the dashboard should show perturbations, leave a one-line note at the end of [WAVE8.md](../WAVE8.md) instead.
+- Never edit `web/app/dashboard/**` — Agent 7F owns it. If the dashboard should show perturbations, leave a one-line note at the end of [WAVE8.md](../docs/build/WAVE8.md) instead.
 - Perturbation flags must not leak into the adapter schema. The adapter records what was learned, not why the environment changed.
 - Reset must be trivial: POST all-false, or delete `fixtures/live/perturbations.json`. Add it to `.gitignore` if the other `fixtures/live/*` runtime files are ignored.
 
@@ -102,7 +102,7 @@ Web: assert `store-b-go-live` absent and `store-b-launch-product` present when t
 1. `curl -s localhost:3010/api/perturbations` returns the flags; POSTing `{"rename_publish":true}` persists them.
 2. With a warm adapter and the flag flipped in the browser, `python -m agent.run_transfer` detects the stale rule, re-grounds, verifies, patches, and the next run is a cache hit on `store-b-launch-product`.
 3. Same for `extra_required` and `reorder_nav`.
-4. `pytest agent/tests` green, `npm run lint && npm run build` green in `web/`.
+4. `pytest agent/tests` green, `npx tsc --noEmit && npm run build` green in `web/`.
 5. Append a "Perturbations" section to [shared/routes.md](../shared/routes.md) documenting the flags, the swapped testids, and the judge-panel testids.
 
 Report at the end: for each flag, the observed `failure_class`, the chosen new target, the patch kind, and the `adapter_version` before/after.

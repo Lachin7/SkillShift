@@ -1,0 +1,33 @@
+# captured 2026-09-19T16:59:24Z
+# Negative controls: the verifier is a separate call with its own evidence, and it says NO when the goal is unmet.
+
+===== 1. naive replay baseline: Store A's labels replayed on Store B =====
+Naive replay: Store A labels (Products / Add Product / Publish) on Store B
+BASELINE_REPLAY_FAILED
+
+===== 2. what the verifier can see, and what it concludes =====
+                 pydantic-ai v2.46.0 • Python 3.12.13
+
+      / \        agent: skill_learner • model: google:gemini-3.6-flash • output: Skill • tools: 0
+     /   \         capabilities: 0
+   /___.___\
+  /    |    \    observability: off — see every model and tool call live, with cost
+/      |      \    set it up free with Logfire and a GitHub login: https://pydantic.dev/ai-setup.md
+`---.._|_..---'    or use any OpenTelemetry backend: https://pydantic.dev/docs/ai/logfire/#otel
+
+                 goes away once observability is on — or PYDANTIC_AI_NO_BANNER=1
+--- state after typing ONLY the name ---
+  store-b-field-name             value='Leather Bag'
+  store-b-field-price            value=''
+  store-b-field-image            value=''
+  store-b-field-shipping         value=''
+  store-b-field-listing-type     value='Public'
+  store-b-field-promo            value=''
+
+--- test-only ground-truth API, asked about a product that is NOT live ---
+   {"product_exists": false, "title": "Nonexistent Item", "price": "", "status": "none", "purchasable": false}
+   {"product_exists": false, "title": "Leather Bag", "price": "", "status": "none", "purchasable": false}
+
+--- verifier on the publish step while Go Live is disabled ---
+   matched=False mismatch=missing_prerequisite failure_class=missing_prerequisite
+   observed='finish disabled; shipping empty; .'

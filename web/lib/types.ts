@@ -13,6 +13,24 @@ export type AdapterMapping = {
   highlight: "error" | null;
 };
 
+export type LoopTraceItem = {
+  semantic_step: string;
+  control: string;
+  verification: "passed" | "failed" | string;
+  failure_class: string;
+  patch?: string | null;
+  adapter_version?: number;
+  mapping_count?: number;
+};
+
+export type RunMetricsLine = {
+  product?: string;
+  actions?: number;
+  model_calls?: number;
+  recoveries?: number;
+  cache_hits?: number;
+};
+
 export type DashboardState = {
   phase: DashboardPhase;
   skill: {
@@ -34,6 +52,19 @@ export type DashboardState = {
     adapter_learned: boolean;
     product_live: boolean;
     message: string;
+    actions?: number;
+    model_calls?: number;
+    recoveries?: number;
+  };
+  loop_trace?: LoopTraceItem[];
+  metrics?: {
+    first?: RunMetricsLine;
+    second?: RunMetricsLine;
+    reuse_gain?: {
+      actions?: number;
+      model_calls?: number;
+      recoveries?: number;
+    };
   };
 };
 

@@ -11,9 +11,11 @@ Paste DECOY_IGNORE_RULE_INSTRUCTION there.
 from __future__ import annotations
 
 import os
+from typing import Any
 
-# Default Gateway model string (Pydantic AI 1.16+). Override with SKILLSHIFT_GATEWAY_MODEL.
-DEFAULT_GATEWAY_MODEL = "gateway/openai:gpt-4o"
+# Default for orgs that only enabled the AI Studio route (common EU Quick Start).
+# Override with SKILLSHIFT_GATEWAY_MODEL (e.g. gateway/openai:gpt-4o when OpenAI is enabled).
+DEFAULT_GATEWAY_MODEL = "gateway/aistudio:models/gemini-3.6-flash"
 
 # Paste this into Logfire → Gateway → Optimizations → New (custom Style / Transform).
 # Bind it to your Gateway endpoint (e.g. modal or openai). Toggle off/on for before/after.
@@ -51,6 +53,24 @@ def gateway_model() -> str:
         os.environ.get("SKILLSHIFT_GATEWAY_MODEL", "").strip()
         or DEFAULT_GATEWAY_MODEL
     )
+
+
+def materialize_model(model: str | Any) -> Any:
+    """Turn SkillShift model ids into objects Agent() accepts.
+
+    pydantic-ai 2.46 knows gateway/openai|anthropic|google|… but not
+    gateway/aistudio:… — AI Studio is OpenAI-compatible behind route=aistudio.
+    """
+    if not isinstance(model, str):
+        return model
+    if model.startswith("gateway/aistudio:"):
+        from pydantic_ai.models.openai import OpenAIChatModel
+        from pydantic_ai.providers.gateway import gateway_provider
+
+        model_id = model.split(":", 1)[1]
+        provider = gateway_provider("openai", route="aistudio")
+        return OpenAIChatModel(model_id, provider=provider)
+    return model
 
 
 def resolve_decision_model(

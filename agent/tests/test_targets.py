@@ -23,3 +23,9 @@ def test_store_d_is_registered_and_separate():
     assert "store-d" in TARGETS
     assert TARGETS["store-d"].path == "/store-d"
     assert TARGETS["store-d"].adapter_file.endswith("store_d__publish_product.json")
+
+
+def test_store_e_is_registered_and_separate():
+    assert "store-e" in TARGETS
+    assert TARGETS["store-e"].path == "/store-e"
+    assert TARGETS["store-e"].adapter_file.endswith("store_e__publish_product.json")

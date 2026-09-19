@@ -41,6 +41,9 @@ ambiguous_state, unexpected_app_state, unsupported_concept.
 
 Use observed_state to describe what you see. hypothesis/alternative should help recovery.
 Only reason from the provided observation, page_text, and screenshot.
+Each control carries its current value. A step that should have supplied data is NOT
+satisfied while a control that needs it is still empty — say so instead of assuming
+the fill worked.
 Clicking a publish control is not success — a published product must be visible
 or the test API must report status=published.
 """
@@ -231,14 +234,15 @@ def _verify_llm(
         json.dumps(payload, indent=2),
         *screenshot_parts(screenshot_bytes or None),
     ]
+    from .gateway import materialize_model
+    from .grounding import run_agent_sync
+
     agent = Agent(
-        model,
+        materialize_model(model),
         name="skill_verifier",
         output_type=Verification,
         instructions=_VERIFIER_INSTRUCTIONS,
     )
-    from .grounding import run_agent_sync
-
     result = run_agent_sync(agent, user_parts)
     failure = result.failure_class
     if result.matched:

@@ -25,6 +25,12 @@
         "highlight": null
       },
       {
+        "label": "Shipping",
+        "app_action": "Select category",
+        "semantic_intent": "satisfy environment prerequisite: shipping category",
+        "highlight": null
+      },
+      {
         "label": "Publish",
         "app_action": "Go Live",
         "semantic_intent": "make the product publicly available",
@@ -36,6 +42,16 @@
     "skill_loaded": true,
     "adapter_learned": true,
     "product_live": true,
-    "message": "Adapter recovered. Product live."
-  }
+    "message": "Missing shipping prerequisite discovered and patched. Product live."
+  },
+  "loop_trace": [
+    {
+      "semantic_step": "make the product publicly available",
+      "control": "select store-b-field-shipping",
+      "verification": "passed",
+      "failure_class": "none",
+      "patch": "add_prerequisite",
+      "mapping_count": 5
+    }
+  ]
 }

@@ -1,0 +1,31 @@
+{
+  "app_id": "store-a",
+  "skill_name": "publish_product",
+  "mappings": [
+    {
+      "semantic_intent": "start creating a new sellable item",
+      "app_action": "Products > Add Product",
+      "confidence": 0.95,
+      "learned_from": "cached"
+    },
+    {
+      "semantic_intent": "provide basic product information",
+      "app_action": "Add Product > Fill name and price",
+      "confidence": 0.95,
+      "learned_from": "cached"
+    },
+    {
+      "semantic_intent": "attach the product image",
+      "app_action": "Media > Upload image",
+      "confidence": 0.95,
+      "learned_from": "cached"
+    },
+    {
+      "semantic_intent": "make the product publicly available",
+      "app_action": "Publish",
+      "confidence": 0.95,
+      "learned_from": "cached"
+    }
+  ],
+  "failure_lessons": []
+}
