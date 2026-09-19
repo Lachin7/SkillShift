@@ -63,9 +63,32 @@ Agent A should put these `data-testid` values on the real controls so Wave 2 Pla
 - `store-b-field-name`
 - `store-b-field-price`
 - `store-b-field-image`
+- `store-b-field-shipping`
+- `store-b-shipping-blocker`
+- `store-b-campaign-banner`
+- `store-b-field-promo`
+- `store-b-promo-blocker`
+- `store-b-field-listing-type`
 - `store-b-go-live`
 - `store-b-product-card`
 - `store-b-collections-create`
+
+## Perturbations (Store B judge controls)
+
+Flags live in `fixtures/live/perturbations.json` and `GET`/`POST` `/api/perturbations`. They survive `page.goto`. All false ⇒ today’s Store B.
+
+| Flag | DOM change | Expected failure |
+| --- | --- | --- |
+| `rename_publish` | remove `store-b-go-live`; add `store-b-launch-product` (“Launch Product”) | `stale_mapping` → `replace_mapping` |
+| `extra_required` | add `store-b-field-tax-class` + `store-b-tax-blocker` | `missing_prerequisite` → `add_prerequisite` |
+| `reorder_nav` | remove `store-b-nav-inventory`; add `store-b-nav-catalog` (“Catalog”); nav becomes Orders / Analytics / Collections / Catalog | `wrong_mapping` / `navigation_error` |
+
+Judge chrome (never part of the seller app):
+
+- `store-b-judge-panel`
+- `store-b-perturb-rename`
+- `store-b-perturb-required`
+- `store-b-perturb-reorder`
 
 ## Dashboard cards
 
@@ -73,3 +96,21 @@ Left to right: **Learned Skill** · **Current App** · **Adapter** · **Status**
 
 Payload shape: [examples/dashboard-state.json](examples/dashboard-state.json).
 Support a `phase` of `mismatch` | `recovered` | `cached` so the Adapter card can turn a mapping red, then rewrite it.
+
+## Test-only Store B state API
+
+Verifier ground truth. **Not** for Explorer or Recovery.
+
+`GET /api/store-b-state?title=Leather%20Bag`
+
+```json
+{
+  "product_exists": true,
+  "title": "Leather Bag",
+  "price": "89",
+  "status": "published",
+  "purchasable": true
+}
+```
+
+`status` is `published` when a matching live product exists, otherwise `none`. `purchasable` is true only when published. Reads `fixtures/live/store-b-products.json`.
